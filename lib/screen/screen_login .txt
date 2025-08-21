@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
 import 'package:flutter_mandiri/widget_and_style/style/style_font_&_size.dart';
 import 'package:flutter_mandiri/firebase_options.dart';
-import 'package:flutter_mandiri/screen/screen_main_menu.dart';
+import 'package:flutter_mandiri/screen/main_menu_screen.dart';
 import 'package:flutter_mandiri/screen/screen_signup.dart';
 import 'package:flutter_mandiri/widget_and_style/transition/widget_anim_transition.dart';
 import 'package:flutter_mandiri/widget_and_style/widget/widget_custom.dart';

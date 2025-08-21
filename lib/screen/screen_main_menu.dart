@@ -1,0 +1,273 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mandiri/colors/colors.dart';
+import 'package:flutter_mandiri/model_data/model_account.dart';
+import 'package:flutter_mandiri/screen/screen_inventory.dart';
+import 'package:flutter_mandiri/widget_and_style/style/style_font_&_size.dart';
+import 'package:flutter_mandiri/widget_and_style/transition/widget_anim_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class ScreenMainMenu extends StatefulWidget {
+  const ScreenMainMenu({super.key});
+
+  @override
+  State<ScreenMainMenu> createState() => _ScreenMainMenu();
+}
+
+class _ScreenMainMenu extends State<ScreenMainMenu> {
+  String? namaPerusahaan;
+  bool _isLoading = true; // Tambahkan state loading
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData(); // Ganti nama fungsi agar lebih deskriptif
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final pref = await SharedPreferences.getInstance();
+      String? uid = pref.getString("uid_user");
+
+      if (uid != null && uid.isNotEmpty) {
+        // Pastikan UID tidak null atau kosong
+        DocumentSnapshot data =
+            await FirebaseFirestore.instance.collection("users").doc(uid).get();
+
+        if (data.exists && mounted) {
+          setState(() {
+            namaPerusahaan = UserModel.getFirestore(data).namaPerusahaan;
+            _isLoading = false; // Data sudah dimuat
+          });
+        } else {
+          // Dokumen tidak ditemukan atau tidak ada data
+          if (mounted) {
+            setState(() {
+              namaPerusahaan = "Pengguna"; // Default jika data tidak ada
+              _isLoading = false;
+            });
+          }
+        }
+      } else {
+        // UID tidak ditemukan di SharedPreferences (mungkin belum login atau error)
+        if (mounted) {
+          setState(() {
+            namaPerusahaan = "Pengguna"; // Default jika UID tidak ada
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      // Tangani error saat mengambil data (misal: koneksi, Firestore error)
+      print("Error loading user data: $e");
+      if (mounted) {
+        setState(() {
+          namaPerusahaan = "Error"; // Tampilkan pesan error
+          _isLoading = false;
+        });
+      }
+      // Anda bisa juga menampilkan SnackBar atau dialog error di sini
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor:
+            AppColor.primary, // Atau warna latar belakang yang sesuai
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.white,
+              ), // Indikator loading
+              SizedBox(height: 16),
+              Text("Memuat data...", style: TextStyle(color: Colors.white)),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 4,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(color: AppColor.primary),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 40,
+                  child: Image.asset("assets/logo.png", width: 50, height: 50),
+                ),
+                Positioned(
+                  left: 65,
+                  top: 55,
+                  child: Text("Aplikasi Ku!", style: labelTextStyle),
+                ),
+                Positioned(
+                  top: 95,
+                  child: SizedBox(
+                    child: Text(
+                      "Welcome ${namaPerusahaan ?? 'Pengguna'}!", // Fallback jika namaPerusahaan masih null
+                      style: lv2TextStyle,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 120,
+                  child: SizedBox(
+                    child: Text(
+                      "Mau ngapain nih hari ini?",
+                      style: lv1TextStyle,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 160,
+                  left: 0,
+                  right: 0,
+                  child: OrientationBuilder(
+                    builder: (context, orientation) {
+                      if (orientation == Orientation.portrait) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            buildGridMenu(),
+                            SizedBox(height: 8),
+                            buildReportSection(),
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(flex: 1, child: buildGridMenu()),
+                            Expanded(flex: 1, child: buildReportSection()),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ... (Sisa kode buildGridMenu, buildReportSection, buildMenuButton tetap sama)
+  Widget buildGridMenu() {
+    return GridView.count(
+      childAspectRatio: 0.7,
+      crossAxisCount: 3,
+      crossAxisSpacing: 5,
+      mainAxisSpacing: 5,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      children: [
+        buildMenuButton(Icons.inventory, "Inventory", () {
+          navUpDownTransition(context, ScreenInventory(), false);
+        }),
+        buildMenuButton(Icons.shopping_bag, "Transaksi", () {}),
+        buildMenuButton(Icons.point_of_sale, "Laporan", () {}),
+      ],
+    );
+  }
+
+  Widget buildReportSection() {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 35,
+            decoration: BoxDecoration(
+              color: AppColor.primary,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              "Penjualan Hari ini",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2), // Gunakan .withOpacity
+                  blurRadius: 6,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Total Penjualan"),
+                      Text("Total Diskon"),
+                      Text("Total PPN"),
+                      Text("Penjualan Bersih"),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text("Rp.0"),
+                      Text("Rp.0"),
+                      Text("Rp.0"),
+                      Text("Rp.0"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildMenuButton(IconData icon, String label, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        padding: EdgeInsets.all(8),
+        elevation: 4,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 36),
+          SizedBox(height: 8),
+          Text(label, style: labelTextStyle),
+        ],
+      ),
+    );
+  }
+}

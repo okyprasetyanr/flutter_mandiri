@@ -30,7 +30,7 @@ class _ScreenMainMenu extends State<ScreenMainMenu> {
             .collection("users")
             .doc("${pref.getString("uid_user")}")
             .get();
-    if (data.exists) {
+    if (data.exists && mounted) {
       setState(() {
         namaPerusahaan = UserModel.getFirestore(data).namaPerusahaan;
       });
@@ -161,7 +161,7 @@ class _ScreenMainMenu extends State<ScreenMainMenu> {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 6,
                   offset: Offset(0, 2),
                 ),

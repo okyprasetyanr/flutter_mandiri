@@ -13,8 +13,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.flutter_mandiri"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 23
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
