@@ -2,17 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
 import 'package:flutter_mandiri/model_data/model_account.dart';
+import 'package:flutter_mandiri/screen/screen_inventory.dart';
 import 'package:flutter_mandiri/widget_and_style/style/style_font_&_size.dart';
+import 'package:flutter_mandiri/widget_and_style/transition/widget_anim_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MainMenu extends StatefulWidget {
-  const MainMenu({super.key});
+class ScreenMainMenu extends StatefulWidget {
+  const ScreenMainMenu({super.key});
 
   @override
-  State<MainMenu> createState() => _MainMenu();
+  State<ScreenMainMenu> createState() => _ScreenMainMenu();
 }
 
-class _MainMenu extends State<MainMenu> {
+class _ScreenMainMenu extends State<ScreenMainMenu> {
   String? namaPerusahaan;
 
   @override
@@ -116,15 +118,18 @@ class _MainMenu extends State<MainMenu> {
 
   Widget buildGridMenu() {
     return GridView.count(
+      childAspectRatio: 0.7,
       crossAxisCount: 3,
       crossAxisSpacing: 5,
       mainAxisSpacing: 5,
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       children: [
-        buildMenuButton(Icons.inventory, "Inventory"),
-        buildMenuButton(Icons.shopping_bag, "Transaksi"),
-        buildMenuButton(Icons.point_of_sale, "Laporan"),
+        buildMenuButton(Icons.inventory, "Inventory", () {
+          navUpDownTransition(context, ScreenInventory(), false);
+        }),
+        buildMenuButton(Icons.shopping_bag, "Transaksi", () {}),
+        buildMenuButton(Icons.point_of_sale, "Laporan", () {}),
       ],
     );
   }
@@ -194,9 +199,9 @@ class _MainMenu extends State<MainMenu> {
     );
   }
 
-  Widget buildMenuButton(IconData icon, String label) {
+  Widget buildMenuButton(IconData icon, String label, VoidCallback onPressed) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: EdgeInsets.all(8),

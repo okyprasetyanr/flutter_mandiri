@@ -7,14 +7,14 @@ import 'package:flutter_mandiri/widget_and_style/style/style_font_&_size.dart';
 import 'package:flutter_mandiri/widget_and_style/widget/widget_custom.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class ScreenSignup extends StatefulWidget {
+  const ScreenSignup({super.key});
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<ScreenSignup> createState() => _ScreenSignupState();
 }
 
-class _SignupState extends State<Signup> {
+class _ScreenSignupState extends State<ScreenSignup> {
   final DatabaseReference databaseref = FirebaseDatabase.instance.ref();
   TextEditingController password = TextEditingController();
   TextEditingController namaperusahaan = TextEditingController();

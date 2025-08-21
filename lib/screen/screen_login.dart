@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
 import 'package:flutter_mandiri/widget_and_style/style/style_font_&_size.dart';
 import 'package:flutter_mandiri/firebase_options.dart';
-import 'package:flutter_mandiri/screen/main_menu.dart';
-import 'package:flutter_mandiri/screen/signup.dart';
+import 'package:flutter_mandiri/screen/main_menu_screen.dart';
+import 'package:flutter_mandiri/screen/screen_signup.dart';
 import 'package:flutter_mandiri/widget_and_style/transition/widget_anim_transition.dart';
 import 'package:flutter_mandiri/widget_and_style/widget/widget_custom.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,17 +14,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MaterialApp(home: LoginScreen(), debugShowCheckedModeBanner: false));
+  runApp(MaterialApp(home: ScreenLogin(), debugShowCheckedModeBanner: false));
 }
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ScreenLogin extends StatefulWidget {
+  const ScreenLogin({super.key});
 
   @override
-  State<LoginScreen> createState() => _MainAppState();
+  State<ScreenLogin> createState() => _MainAppState();
 }
 
-class _MainAppState extends State<LoginScreen> {
+class _MainAppState extends State<ScreenLogin> {
   bool _obscurePassword = false;
   double? _logoTopPosition;
   bool showForm = false;
@@ -257,7 +257,7 @@ class _MainAppState extends State<LoginScreen> {
                                           if (!mounted) return;
                                           navUpDownTransition(
                                             context,
-                                            MainMenu(),
+                                            ScreenMainMenu(),
                                             true,
                                           );
                                         })
@@ -285,7 +285,7 @@ class _MainAppState extends State<LoginScreen> {
                                   onPressed: () {
                                     navUpDownTransition(
                                       context,
-                                      Signup(),
+                                      ScreenSignup(),
                                       false,
                                     );
                                   },
