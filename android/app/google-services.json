@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "270816365340",
+    "firebase_url": "https://marketplacemandiri-default-rtdb.firebaseio.com",
+    "project_id": "marketplacemandiri",
+    "storage_bucket": "marketplacemandiri.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270816365340:android:f9d574fc972503925b08d9",
+        "android_client_info": {
+          "package_name": "com.example.flutter_mandiri"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASZN1gi_4aGiOsuIzplQYZr8bdOai6QFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
