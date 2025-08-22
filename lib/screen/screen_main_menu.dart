@@ -16,81 +16,29 @@ class ScreenMainMenu extends StatefulWidget {
 
 class _ScreenMainMenu extends State<ScreenMainMenu> {
   String? namaPerusahaan;
-  bool _isLoading = true; // Tambahkan state loading
 
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // Ganti nama fungsi agar lebih deskriptif
+    initPref();
   }
 
-  Future<void> _loadUserData() async {
-    try {
-      final pref = await SharedPreferences.getInstance();
-      String? uid = pref.getString("uid_user");
-
-      if (uid != null && uid.isNotEmpty) {
-        // Pastikan UID tidak null atau kosong
-        DocumentSnapshot data =
-            await FirebaseFirestore.instance.collection("users").doc(uid).get();
-
-        if (data.exists && mounted) {
-          setState(() {
-            namaPerusahaan = UserModel.getFirestore(data).namaPerusahaan;
-            _isLoading = false; // Data sudah dimuat
-          });
-        } else {
-          // Dokumen tidak ditemukan atau tidak ada data
-          if (mounted) {
-            setState(() {
-              namaPerusahaan = "Pengguna"; // Default jika data tidak ada
-              _isLoading = false;
-            });
-          }
-        }
-      } else {
-        // UID tidak ditemukan di SharedPreferences (mungkin belum login atau error)
-        if (mounted) {
-          setState(() {
-            namaPerusahaan = "Pengguna"; // Default jika UID tidak ada
-            _isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
-      // Tangani error saat mengambil data (misal: koneksi, Firestore error)
-      print("Error loading user data: $e");
-      if (mounted) {
-        setState(() {
-          namaPerusahaan = "Error"; // Tampilkan pesan error
-          _isLoading = false;
-        });
-      }
-      // Anda bisa juga menampilkan SnackBar atau dialog error di sini
+  Future<void> initPref() async {
+    final pref = await SharedPreferences.getInstance();
+    DocumentSnapshot data =
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc("${pref.getString("uid_user")}")
+            .get();
+    if (data.exists && mounted) {
+      setState(() {
+        namaPerusahaan = UserModel.getFirestore(data).namaPerusahaan;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor:
-            AppColor.primary, // Atau warna latar belakang yang sesuai
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(
-                color: Colors.white,
-              ), // Indikator loading
-              SizedBox(height: 16),
-              Text("Memuat data...", style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       body: Stack(
         children: [
@@ -118,7 +66,7 @@ class _ScreenMainMenu extends State<ScreenMainMenu> {
                   top: 95,
                   child: SizedBox(
                     child: Text(
-                      "Welcome ${namaPerusahaan ?? 'Pengguna'}!", // Fallback jika namaPerusahaan masih null
+                      "Welcome $namaPerusahaan!",
                       style: lv2TextStyle,
                     ),
                   ),
@@ -168,7 +116,6 @@ class _ScreenMainMenu extends State<ScreenMainMenu> {
     );
   }
 
-  // ... (Sisa kode buildGridMenu, buildReportSection, buildMenuButton tetap sama)
   Widget buildGridMenu() {
     return GridView.count(
       childAspectRatio: 0.7,
@@ -214,7 +161,7 @@ class _ScreenMainMenu extends State<ScreenMainMenu> {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2), // Gunakan .withOpacity
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 6,
                   offset: Offset(0, 2),
                 ),
