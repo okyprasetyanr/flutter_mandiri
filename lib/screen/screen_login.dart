@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
-import 'package:flutter_mandiri/widget_and_style/style/style_font_&_size.dart';
+import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/firebase_options.dart';
 import 'package:flutter_mandiri/screen/screen_main_menu.dart';
 import 'package:flutter_mandiri/screen/screen_signup.dart';
-import 'package:flutter_mandiri/widget_and_style/transition/widget_anim_transition.dart';
-import 'package:flutter_mandiri/widget_and_style/widget/widget_custom.dart';
+import 'package:flutter_mandiri/style_and_transition/transition_navigator/transition_UpDown.dart';
+import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -246,8 +246,8 @@ class _MainAppState extends State<ScreenLogin> {
                                   onPressed: () {
                                     FirebaseAuth.instance
                                         .signInWithEmailAndPassword(
-                                          email: emailcontroller.text,
-                                          password: passcontroller.text,
+                                          email: "demo@gmail.com",
+                                          password: "12345678",
                                         )
                                         .then((userCredential) async {
                                           String uid = userCredential.user!.uid;

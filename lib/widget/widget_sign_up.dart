@@ -1,18 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mandiri/colors/colors.dart';
-import 'package:flutter_mandiri/widget_and_style/style/style_font_&_size.dart';
+import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-void customSnackBar(BuildContext context, String text) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(text),
-      duration: Duration(seconds: 2),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: AppColor.primary,
-    ),
-  );
-}
 
 Widget customTextField(
   String label,

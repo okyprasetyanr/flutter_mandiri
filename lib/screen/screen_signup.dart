@@ -3,8 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
-import 'package:flutter_mandiri/widget_and_style/style/style_font_&_size.dart';
-import 'package:flutter_mandiri/widget_and_style/widget/widget_custom.dart';
+import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
+import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
+import 'package:flutter_mandiri/widget/widget_sign_up.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ScreenSignup extends StatefulWidget {
