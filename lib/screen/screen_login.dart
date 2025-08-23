@@ -38,53 +38,17 @@ class _MainAppState extends State<ScreenLogin> {
     super.dispose();
   }
 
-  Future<void> loginUser(
-    String email,
-    String password,
-    BuildContext context,
-  ) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Login Berhasil')));
-      });
-    } on FirebaseAuthException catch (e) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Login Gagal: ${e.message ?? 'Koneksi tidak Stabil!'}',
-            ),
-          ),
-        );
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _logoTopPosition = 0;
+    _logoTopPosition = 0;
 
-        Future.delayed(Duration(milliseconds: 2000), () {
-          setState(() {
-            _logoTopPosition = -150;
-          });
-        });
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      setState(() => _logoTopPosition = -150);
+    });
 
-        Future.delayed(Duration(milliseconds: 2800), () {
-          setState(() {
-            showForm = true;
-          });
-        });
-      });
+    Future.delayed(const Duration(milliseconds: 2800), () {
+      setState(() => showForm = true);
     });
   }
 
@@ -166,7 +130,7 @@ class _MainAppState extends State<ScreenLogin> {
                           children: [
                             Column(
                               children: [
-                                SizedBox(height: 220),
+                                const SizedBox(height: 220),
                                 Text('Aplikasi Biji', style: titleTextStyle),
                                 const SizedBox(height: 10),
                                 Material(
@@ -232,7 +196,7 @@ class _MainAppState extends State<ScreenLogin> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColor.primary,
@@ -271,7 +235,7 @@ class _MainAppState extends State<ScreenLogin> {
                                   },
                                   child: Text('Login', style: buttonTextStyle),
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColor.primary,
