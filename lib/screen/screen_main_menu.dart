@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_main_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,10 +35,12 @@ class _ScreenMainMenuState extends State<ScreenMainMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutTopBottomMainMenu(
-      widgetTop: LayoutTop(),
-      widgetBottom: LayoutBottom(),
-      namaPerusahaan: namaPerusahaan ?? "Mohon Tunggu",
+    return Scaffold(
+      body: LayoutTopBottomMainMenu(
+        widgetTop: LayoutTop(),
+        widgetBottom: LayoutBottom(),
+        namaPerusahaan: namaPerusahaan ?? "Mohon Tunggu",
+      ),
     );
   }
 }

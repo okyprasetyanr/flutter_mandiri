@@ -62,7 +62,7 @@ class LayoutTopBottom extends StatelessWidget {
                       Positioned(
                         left: width / widthRequested,
                         child: SizedBox(
-                          width: width / width,
+                          width: width / widthRequested,
                           height: height,
                           child: widgetBottom,
                         ),

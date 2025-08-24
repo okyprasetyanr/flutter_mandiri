@@ -53,7 +53,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     gridviewcount = orientation == Orientation.portrait ? 3 : 4;
     return LayoutTopBottom(
       heightRequested: 1.8,
-      widthRequested: 1.8,
+      widthRequested: 2,
       widgetTop: topLayout(),
       widgetBottom: bottomLayout(),
       widgetNavigation: navigationGesture(),
