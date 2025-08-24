@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
-import 'package:flutter_mandiri/template_responsif/layout_top_bottom_half.dart';
+import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
 
 class ScreenInventory extends StatefulWidget {
   const ScreenInventory({super.key});
