@@ -123,7 +123,6 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
           ],
         ),
         Flexible(
-          fit: FlexFit.loose,
           child: GridView.builder(
             padding: EdgeInsets.all(10),
             itemCount: dummyItems.length,
@@ -148,6 +147,7 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                           diskonItem: 0.toString(),
                           idKategoriItem: "Kategori A",
                           idCondimen: "none",
+                          urlGambar: "",
                         ),
                       );
                     });
@@ -184,41 +184,40 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
             itemCount: pilihitem.length,
             itemBuilder: (context, index) {
               return InkWell(
-                child: Column(
+                onTap: () {},
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Flexible(
-                          child: Row(
-                            children: [
-                              Text(
-                                pilihitem[index].qtyItem,
-                                style: lv1TextStyle,
-                              ),
-                              SizedBox(width: 5),
-                              Text(
-                                pilihitem[index].namaItem,
-                                style: lv1TextStyle,
-                              ),
-                            ],
-                          ),
+                        Image.network(
+                          pilihitem[index].urlGambar,
+                          fit: BoxFit.cover,
+                          width: 40,
+                          height: 40,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "assets/logo.png",
+                              width: 40,
+                              height: 40,
+                            );
+                          },
                         ),
-                        Flexible(
-                          child: Row(
-                            children: [
-                              Text(
-                                formatUang(pilihitem[index].hargaItem),
-                                style: lv1TextStyle,
-                              ),
-                            ],
-                          ),
+                        SizedBox(width: 10),
+                        Text(pilihitem[index].qtyItem, style: lv1TextStyle),
+                        SizedBox(width: 5),
+                        Text(pilihitem[index].namaItem, style: lv1TextStyle),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          formatUang(pilihitem[index].hargaItem),
+                          style: lv1TextStyle,
                         ),
                       ],
                     ),
-
-                    SizedBox(height: 10),
                   ],
                 ),
               );
