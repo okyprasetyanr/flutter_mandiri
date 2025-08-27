@@ -19,7 +19,7 @@ class LayoutTopBottom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(top: 40),
+        padding: EdgeInsets.only(top: 40, left: 10, right: 10),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final height = constraints.maxHeight;

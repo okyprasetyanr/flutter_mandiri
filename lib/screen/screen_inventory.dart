@@ -50,7 +50,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
-    gridviewcount = orientation == Orientation.portrait ? 3 : 4;
+    gridviewcount = orientation == Orientation.portrait ? 5 : 4;
     return LayoutTopBottom(
       heightRequested: 1.8,
       widthRequested: 2,
@@ -61,257 +61,245 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   }
 
   Widget topLayout() {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        isOpen = true;
-                      });
-                    },
-                    label: Text("Menu", style: lv1TextStyle),
-                    icon: Icon(Icons.menu),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 4,
-                      backgroundColor: AppColor.primary,
-                    ),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      isOpen = true;
+                    });
+                  },
+                  label: Text("Menu", style: lv1TextStyle),
+                  icon: Icon(Icons.menu),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 4,
+                    backgroundColor: AppColor.primary,
                   ),
                 ),
               ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Text("Inventory", style: titleTextStyle),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Text("Inventory", style: titleTextStyle),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 2,
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: "Search",
+                  labelStyle: labelTextStyle,
+                  hintText: "Search...",
+                  hintStyle: hintTextStyle,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
-            ],
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.check),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                    check ? AppColor.primary : Colors.white,
+                  ),
+                  elevation: WidgetStateProperty.all(4),
+                  padding: WidgetStateProperty.all(EdgeInsets.all(15)),
+                ),
+                onPressed: () {
+                  setState(() {
+                    check = !check;
+                  });
+                },
+                label: Text("Condimen", style: labelTextStyle),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Flexible(
+          fit: FlexFit.loose,
+          child: GridView.builder(
+            padding: EdgeInsets.all(10),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: gridviewcount,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
+            ),
+            itemCount: dummyItems.length,
+            itemBuilder: (context, index) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      spreadRadius: 1,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Image.asset("assets/logo.png"),
+                    ),
+                    Text(dummyItems[index], style: lv1TextStyle),
+                  ],
+                ),
+              );
+            },
           ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+        ),
+        SizedBox(
+          height: 45,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(width: 10),
               Expanded(
-                flex: 2,
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: "Search",
-                    labelStyle: labelTextStyle,
-                    hintText: "Search...",
-                    hintStyle: hintTextStyle,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                child: DropdownButtonFormField<dynamic>(
+                  initialValue: selectedfilter,
+                  hint: Text("Filter", style: lv1TextStyle),
+                  items:
+                      filter
+                          .map(
+                            (map) =>
+                                DropdownMenuItem(value: map, child: Text(map)),
+                          )
+                          .toList(),
+
+                  onChanged:
+                      (value) => (setState(() {
+                        selectedfilter = value;
+                      })),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                flex: 1,
-                child: ElevatedButton.icon(
-                  icon: Icon(Icons.check),
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      check ? AppColor.primary : Colors.white,
-                    ),
-                    elevation: WidgetStateProperty.all(4),
-                    padding: WidgetStateProperty.all(EdgeInsets.all(15)),
-                  ),
-                  onPressed: () {
+                child: DropdownButtonFormField<String>(
+                  initialValue: selectedcabang,
+                  hint: Text("Cabang", style: lv1TextStyle),
+                  items:
+                      dummycabang
+                          .map(
+                            (map) =>
+                                DropdownMenuItem(value: map, child: Text(map)),
+                          )
+                          .toList(),
+                  onChanged: (value) {
                     setState(() {
-                      check = !check;
+                      selectedcabang = value;
                     });
                   },
-                  label: Text("Condimen", style: labelTextStyle),
                 ),
               ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  hint: Text("Status"),
+                  items:
+                      status
+                          .map(
+                            (map) =>
+                                DropdownMenuItem(value: map, child: Text(map)),
+                          )
+                          .toList(),
+                  onChanged:
+                      (value) => (setState(() {
+                        selectedstatus = value;
+                      })),
+                ),
+              ),
+              const SizedBox(width: 10),
             ],
           ),
-          const SizedBox(height: 10),
-          Flexible(
-            fit: FlexFit.loose,
-            child: GridView.builder(
-              padding: EdgeInsets.all(10),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: gridviewcount,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 15,
-              ),
-              itemCount: dummyItems.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        spreadRadius: 1,
-                        blurRadius: 6,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        fit: FlexFit.loose,
-                        child: Image.asset("assets/logo.png"),
-                      ),
-                      Text(dummyItems[index], style: lv1TextStyle),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          SizedBox(
-            height: 45,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(width: 10),
-                Expanded(
-                  child: DropdownButtonFormField<dynamic>(
-                    value: selectedfilter,
-                    hint: Text("Filter", style: lv1TextStyle),
-                    items:
-                        filter
-                            .map(
-                              (map) => DropdownMenuItem(
-                                value: map,
-                                child: Text(map),
-                              ),
-                            )
-                            .toList(),
-
-                    onChanged:
-                        (value) => (setState(() {
-                          selectedfilter = value;
-                        })),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: selectedcabang,
-                    hint: Text("Cabang", style: lv1TextStyle),
-                    items:
-                        dummycabang
-                            .map(
-                              (map) => DropdownMenuItem(
-                                value: map,
-                                child: Text(map),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedcabang = value;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    hint: Text("Status"),
-                    items:
-                        status
-                            .map(
-                              (map) => DropdownMenuItem(
-                                value: map,
-                                child: Text(map),
-                              ),
-                            )
-                            .toList(),
-                    onChanged:
-                        (value) => (setState(() {
-                          selectedstatus = value;
-                        })),
-                  ),
-                ),
-                const SizedBox(width: 10),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget bottomLayout() {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: Text("Detail", style: titleTextStyle),
-          ),
-          const SizedBox(height: 30),
-          Flexible(
-            fit: FlexFit.loose,
-            child: customTextField("Nama Item", namaItemController),
-          ),
-          const SizedBox(height: 10),
-          Flexible(
-            fit: FlexFit.loose,
-            child: customTextField("Kode/Barcode", namaItemController),
-          ),
-          const SizedBox(height: 10),
-          Flexible(
-            fit: FlexFit.loose,
-            child: customTextField("Satuan", namaItemController),
-          ),
-          const SizedBox(height: 10),
-          Flexible(
-            fit: FlexFit.loose,
-            child: customTextField("Quantity", namaItemController),
-          ),
-          const SizedBox(height: 10),
-          Flexible(
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {},
-                    label: Text("Hapus", style: lv1TextStyle),
-                    icon: Icon(Icons.delete, color: Colors.black),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 4,
-                      backgroundColor: AppColor.delete,
-                    ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: Alignment.topRight,
+          child: Text("Detail", style: titleTextStyle),
+        ),
+        const SizedBox(height: 30),
+        Flexible(
+          fit: FlexFit.loose,
+          child: customTextField("Nama Item", namaItemController),
+        ),
+        const SizedBox(height: 10),
+        Flexible(
+          fit: FlexFit.loose,
+          child: customTextField("Kode/Barcode", namaItemController),
+        ),
+        const SizedBox(height: 10),
+        Flexible(
+          fit: FlexFit.loose,
+          child: customTextField("Satuan", namaItemController),
+        ),
+        const SizedBox(height: 10),
+        Flexible(
+          fit: FlexFit.loose,
+          child: customTextField("Quantity", namaItemController),
+        ),
+        const SizedBox(height: 10),
+        Flexible(
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  label: Text("Hapus", style: lv1TextStyle),
+                  icon: Icon(Icons.delete, color: Colors.black),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 4,
+                    backgroundColor: AppColor.delete,
                   ),
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {},
-                    label: Text("Simpan", style: lv1TextStyle),
-                    icon: Icon(Icons.save, color: Colors.black),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 4,
-                      backgroundColor: AppColor.primary,
-                    ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  label: Text("Simpan", style: lv1TextStyle),
+                  icon: Icon(Icons.save, color: Colors.black),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 4,
+                    backgroundColor: AppColor.primary,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

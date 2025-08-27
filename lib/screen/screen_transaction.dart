@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mandiri/function/function.dart';
+import 'package:flutter_mandiri/model_data/model_item_pesanan.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
 
@@ -28,10 +30,12 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
     "Item 13",
   ];
 
+  final List<ModelItemPesanan> pilihitem = [];
+
   @override
   Widget build(BuildContext context) {
     Orientation rotasi = MediaQuery.of(context).orientation;
-    gridviewcount = rotasi == Orientation.portrait ? 3 : 4;
+    gridviewcount = rotasi == Orientation.portrait ? 5 : 4;
     return LayoutTopBottom(
       heightRequested: 2,
       widthRequested: 2,
@@ -43,12 +47,12 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
 
   Widget layoutTop() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
           children: [
-            const SizedBox(width: 10),
             Flexible(
               fit: FlexFit.loose,
               child: ElevatedButton.icon(
@@ -61,7 +65,18 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                 label: Text("Menu"),
               ),
             ),
-            const SizedBox(width: 10),
+            Align(
+              alignment: Alignment.topRight,
+              child: Text("Penjualan", style: titleTextStyle),
+            ),
+          ],
+        ),
+
+        SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: [
             Expanded(
               flex: 2,
               child: TextField(
@@ -105,10 +120,8 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
           ],
         ),
-        SizedBox(height: 10),
         Flexible(
           fit: FlexFit.loose,
           child: GridView.builder(
@@ -124,7 +137,21 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                 elevation: 2,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    setState(() {
+                      pilihitem.add(
+                        ModelItemPesanan(
+                          namaItem: dummyItems[index],
+                          idItem: dummyItems[index],
+                          qtyItem: 1.toString(),
+                          hargaItem: 1000.toString(),
+                          diskonItem: 0.toString(),
+                          idKategoriItem: "Kategori A",
+                          idCondimen: "none",
+                        ),
+                      );
+                    });
+                  },
                   child: Column(
                     children: [
                       Flexible(child: Image.asset("assets/logo.png")),
@@ -142,7 +169,64 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
   }
 
   Widget layoutBottom() {
-    return Text("");
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: Alignment.topRight,
+          child: Text("List Pesanan", style: titleTextStyle),
+        ),
+        SizedBox(height: 10),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: pilihitem.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: Row(
+                            children: [
+                              Text(
+                                pilihitem[index].qtyItem,
+                                style: lv1TextStyle,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                pilihitem[index].namaItem,
+                                style: lv1TextStyle,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Flexible(
+                          child: Row(
+                            children: [
+                              Text(
+                                formatUang(pilihitem[index].hargaItem),
+                                style: lv1TextStyle,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 10),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget navigationGesture() {
