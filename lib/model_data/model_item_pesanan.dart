@@ -1,12 +1,12 @@
 class ModelItemPesanan {
-  String _Nama_item,
-      _Id_item,
-      _Qty_item,
-      _Harga_item,
-      _Diskon_item,
-      _Id_kategori_item,
-      _Id_condimen,
-      _Url_gambar;
+  final String _namaItem,
+      _idItem,
+      _qtyItem,
+      _hargaItem,
+      _diskonItem,
+      _idKategoriItem,
+      _idCondimen,
+      _urlGambar;
 
   ModelItemPesanan({
     required String namaItem,
@@ -17,30 +17,30 @@ class ModelItemPesanan {
     required String idKategoriItem,
     required String idCondimen,
     required String urlGambar,
-  }) : _Nama_item = namaItem,
-       _Id_item = idItem,
-       _Qty_item = qtyItem,
-       _Harga_item = hargaItem,
-       _Diskon_item = diskonItem,
-       _Id_kategori_item = idKategoriItem,
-       _Id_condimen = idCondimen,
-       _Url_gambar = urlGambar;
+  }) : _namaItem = namaItem,
+       _idItem = idItem,
+       _qtyItem = qtyItem,
+       _hargaItem = hargaItem,
+       _diskonItem = diskonItem,
+       _idKategoriItem = idKategoriItem,
+       _idCondimen = idCondimen,
+       _urlGambar = urlGambar;
 
-  String get getnamaItem => _Nama_item;
-  String get getidItem => _Id_item;
-  String get getqtyItem => _Qty_item;
-  String get gethargaItem => _Harga_item;
-  String get getdiskonItem => _Diskon_item;
-  String get getidKategoriItem => _Id_kategori_item;
-  String get getidCondimen => _Id_condimen;
-  String get geturlGambar => _Url_gambar;
+  String get getnamaItem => _namaItem;
+  String get getidItem => _idItem;
+  String get getqtyItem => _qtyItem;
+  String get gethargaItem => _hargaItem;
+  String get getdiskonItem => _diskonItem;
+  String get getidKategoriItem => _idKategoriItem;
+  String get getidCondimen => _idCondimen;
+  String get geturlGambar => _urlGambar;
 
-  set setnamaItem(String value) => _Nama_item;
-  set setidItem(String value) => _Id_item;
-  set setqtyItem(String value) => _Qty_item;
-  set sethargaItem(String value) => _Harga_item;
-  set setdiskonItem(String value) => _Diskon_item;
-  set setidKategoriItem(String value) => _Id_kategori_item;
-  set setidCondimen(String value) => _Id_condimen;
-  set seturlGambar(String value) => _Url_gambar;
+  set setnamaItem(String value) => _namaItem;
+  set setidItem(String value) => _idItem;
+  set setqtyItem(String value) => _qtyItem;
+  set sethargaItem(String value) => _hargaItem;
+  set setdiskonItem(String value) => _diskonItem;
+  set setidKategoriItem(String value) => _idKategoriItem;
+  set setidCondimen(String value) => _idCondimen;
+  set seturlGambar(String value) => _urlGambar;
 }

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ModelCabang {
-  String _daerahCabang, _nomorCabang, _alamatCabang, _idCabang;
+  final String _daerahCabang, _nomorCabang, _alamatCabang, _idCabang;
   ModelCabang({
     required String daerahCabang,
     required String nomorCabang,
