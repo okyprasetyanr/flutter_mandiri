@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
+import 'package:flutter_mandiri/model_data/model_item.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenInventory extends StatefulWidget {
   const ScreenInventory({super.key});
@@ -11,6 +14,7 @@ class ScreenInventory extends StatefulWidget {
 }
 
 class _ScreenInventoryState extends State<ScreenInventory> {
+  String? uidUser;
   TextEditingController search = TextEditingController();
   String? selectedfilter;
   String? selectedcabang;
@@ -22,21 +26,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   final List<String> dummycabang = ["Cabang 1", "Cabang 2"];
   final List<String> status = ["Active", "Deactive"];
 
-  final List<String> dummyItems = [
-    "Item 1",
-    "Item 2",
-    "Item 3",
-    "Item 4",
-    "Item 5",
-    "Item 6",
-    "Item 7",
-    "Item 8",
-    "Item 9",
-    "Item 10",
-    "Item 11",
-    "Item 12",
-    "Item 13",
-  ];
+  final List<ModelItem> dummyItems = [];
 
   final List<String> filter = [
     "A-Z",
@@ -46,6 +36,16 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     "Stock -",
     "Stock +",
   ];
+
+@override
+  void initState() {
+    super.initState();
+  }
+
+ Future<void> uid_user() async {
+      SharedPreferences pref= await SharedPreferences.getInstance();
+      uidUser=pref.getString("uid_user");
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +165,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                       fit: FlexFit.loose,
                       child: Image.asset("assets/logo.png"),
                     ),
-                    Text(dummyItems[index], style: lv1TextStyle),
+                    Text(dummyItems[index].namaItem, style: lv1TextStyle),
                   ],
                 ),
               );
@@ -287,7 +287,9 @@ class _ScreenInventoryState extends State<ScreenInventory> {
               const SizedBox(width: 20),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    FirebaseFirestore.instance.collection("items/").add()
+                  },
                   label: Text("Simpan", style: lv1TextStyle),
                   icon: Icon(Icons.save, color: Colors.black),
                   style: ElevatedButton.styleFrom(

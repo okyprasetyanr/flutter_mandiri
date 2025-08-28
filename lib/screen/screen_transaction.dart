@@ -83,7 +83,7 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                 decoration: InputDecoration(
                   alignLabelWithHint: false,
                   label: Text("Search", style: lv1TextStyle),
-                  hint: Text("Search...", style: lv1TextStyle),
+                  hintText: "Search...",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),

@@ -11,6 +11,8 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+/android/build.gradle.kts
+/android/app/build.gradle.kts
 
 # IntelliJ related
 *.iml
