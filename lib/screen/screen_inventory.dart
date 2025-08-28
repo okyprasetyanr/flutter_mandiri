@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
+import 'package:flutter_mandiri/model_data/model_cabang.dart';
 import 'package:flutter_mandiri/model_data/model_item.dart';
+import 'package:flutter_mandiri/model_data/model_kategori.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class ScreenInventory extends StatefulWidget {
   const ScreenInventory({super.key});
@@ -18,12 +21,43 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   TextEditingController search = TextEditingController();
   String? selectedfilter;
   String? selectedcabang;
+  List<ModelCabang> listcabang = [];
+  List<ModelKategori> lsitkategori = [];
+
+  Future<void> initKategori() async {
+    DocumentSnapshot data =
+        await FirebaseFirestore.instance
+            .collection("items")
+            .doc("$uidUser")
+            .get();
+    if (data.exists && mounted) {
+      setState(() {
+        lsitkategori.add(ModelKategori.getDataListKategori(data));
+      });
+    }
+  }
+
+  Future<void> initCabang() async {
+    DocumentSnapshot data =
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc("$uidUser")
+            .get();
+    if (data.exists && mounted) {
+      setState(() {
+        listcabang = ModelCabang.getDataListCabang(data);
+      });
+    }
+  }
+
   String? selectedstatus;
+
   int gridviewcount = 0;
   bool isOpen = false;
   bool check = false;
   TextEditingController namaItemController = TextEditingController();
-  final List<String> dummycabang = ["Cabang 1", "Cabang 2"];
+  TextEditingController hargaItemController = TextEditingController();
+  TextEditingController kodeBarcodeController = TextEditingController();
   final List<String> status = ["Active", "Deactive"];
 
   final List<ModelItem> dummyItems = [];
@@ -37,15 +71,15 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     "Stock +",
   ];
 
-@override
+  @override
   void initState() {
     super.initState();
   }
 
- Future<void> uid_user() async {
-      SharedPreferences pref= await SharedPreferences.getInstance();
-      uidUser=pref.getString("uid_user");
-    }
+  Future<void> uid_user() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    uidUser = pref.getString("uid_user");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +199,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                       fit: FlexFit.loose,
                       child: Image.asset("assets/logo.png"),
                     ),
-                    Text(dummyItems[index].namaItem, style: lv1TextStyle),
+                    Text(dummyItems[index].getnamaItem, style: lv1TextStyle),
                   ],
                 ),
               );
@@ -198,19 +232,21 @@ class _ScreenInventoryState extends State<ScreenInventory> {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  initialValue: selectedcabang,
+                child: DropdownButtonFormField<ModelCabang>(
+                  initialValue: listcabang[0],
                   hint: Text("Cabang", style: lv1TextStyle),
                   items:
-                      dummycabang
+                      listcabang
                           .map(
-                            (map) =>
-                                DropdownMenuItem(value: map, child: Text(map)),
+                            (map) => DropdownMenuItem(
+                              value: map,
+                              child: Text(map.getdaerahCabang),
+                            ),
                           )
                           .toList(),
                   onChanged: (value) {
                     setState(() {
-                      selectedcabang = value;
+                      selectedcabang = value!.getdaerahCabang;
                     });
                   },
                 ),
@@ -257,17 +293,37 @@ class _ScreenInventoryState extends State<ScreenInventory> {
         const SizedBox(height: 10),
         Flexible(
           fit: FlexFit.loose,
-          child: customTextField("Kode/Barcode", namaItemController),
+          child: customTextField("Kode/Barcode", kodeBarcodeController),
         ),
         const SizedBox(height: 10),
         Flexible(
           fit: FlexFit.loose,
-          child: customTextField("Satuan", namaItemController),
+          child: customTextField("Harga", hargaItemController),
         ),
         const SizedBox(height: 10),
         Flexible(
           fit: FlexFit.loose,
-          child: customTextField("Quantity", namaItemController),
+          child: Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<ModelKategori>(
+                  items: items,
+                  onChanged: (value) {},
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: TextEditingController(text: selectedcabang),
+                  decoration: InputDecoration(
+                    enabled: false,
+                    labelText: "Cabang",
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 10),
         Flexible(
@@ -288,7 +344,15 @@ class _ScreenInventoryState extends State<ScreenInventory> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    FirebaseFirestore.instance.collection("items/").add()
+                    final item = ModelItem(
+                      namaItem: namaItemController.text,
+                      idItem: Uuid().v4(),
+                      hargaItem: hargaItemController.text,
+                      idKategoriItem: "Kateogry A",
+                      statusCondiment: false,
+                      urlGambar: "",
+                    );
+                    item.pushData(uidUser!);
                   },
                   label: Text("Simpan", style: lv1TextStyle),
                   icon: Icon(Icons.save, color: Colors.black),

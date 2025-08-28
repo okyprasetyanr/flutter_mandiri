@@ -26,21 +26,21 @@ class ModelItemPesanan {
        _Id_condimen = idCondimen,
        _Url_gambar = urlGambar;
 
-  String get namaItem => _Nama_item;
-  String get idItem => _Id_item;
-  String get qtyItem => _Qty_item;
-  String get hargaItem => _Harga_item;
-  String get diskonItem => _Diskon_item;
-  String get idKategoriItem => _Id_kategori_item;
-  String get idCondimen => _Id_condimen;
-  String get urlGambar => _Url_gambar;
+  String get getnamaItem => _Nama_item;
+  String get getidItem => _Id_item;
+  String get getqtyItem => _Qty_item;
+  String get gethargaItem => _Harga_item;
+  String get getdiskonItem => _Diskon_item;
+  String get getidKategoriItem => _Id_kategori_item;
+  String get getidCondimen => _Id_condimen;
+  String get geturlGambar => _Url_gambar;
 
-  set namaItem(String value) => _Nama_item;
-  set idItem(String value) => _Id_item;
-  set qtyItem(String value) => _Qty_item;
-  set hargaItem(String value) => _Harga_item;
-  set diskonItem(String value) => _Diskon_item;
-  set idKategoriItem(String value) => _Id_kategori_item;
-  set idCondimen(String value) => _Id_condimen;
-  set urlGambar(String value) => _Url_gambar;
+  set setnamaItem(String value) => _Nama_item;
+  set setidItem(String value) => _Id_item;
+  set setqtyItem(String value) => _Qty_item;
+  set sethargaItem(String value) => _Harga_item;
+  set setdiskonItem(String value) => _Diskon_item;
+  set setidKategoriItem(String value) => _Id_kategori_item;
+  set setidCondimen(String value) => _Id_condimen;
+  set seturlGambar(String value) => _Url_gambar;
 }

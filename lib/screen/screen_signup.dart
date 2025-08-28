@@ -7,6 +7,7 @@ import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart'
 import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
 import 'package:flutter_mandiri/widget/widget_sign_up.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uuid/uuid.dart';
 
 class ScreenSignup extends StatefulWidget {
   const ScreenSignup({super.key});
@@ -147,7 +148,7 @@ class _ScreenSignupState extends State<ScreenSignup> {
                             borderRadius: BorderRadius.circular(15),
                             child: DropdownButtonFormField<String>(
                               isExpanded: true,
-                              value: selectedDay,
+                              initialValue: selectedDay,
                               hint: Text("Tanggal", style: hintTextStyle),
                               items:
                                   days
@@ -185,7 +186,7 @@ class _ScreenSignupState extends State<ScreenSignup> {
                             borderRadius: BorderRadius.circular(15),
                             child: DropdownButtonFormField<String>(
                               isExpanded: true,
-                              value: selectedMonth,
+                              initialValue: selectedMonth,
                               hint: Text("Bulan", style: hintTextStyle),
                               items:
                                   months
@@ -223,7 +224,7 @@ class _ScreenSignupState extends State<ScreenSignup> {
                             borderRadius: BorderRadius.circular(15),
                             child: DropdownButtonFormField<String>(
                               isExpanded: true,
-                              value: selectedYear,
+                              initialValue: selectedYear,
                               hint: Text("Tahun", style: hintTextStyle),
                               items:
                                   years
@@ -286,7 +287,7 @@ class _ScreenSignupState extends State<ScreenSignup> {
                                         borderRadius: BorderRadius.circular(15),
                                         child: DropdownButtonFormField<String>(
                                           isExpanded: false,
-                                          value: selectedcabang,
+                                          initialValue: selectedcabang,
                                           hint: Center(
                                             child: Text(
                                               "$selectedcabang",
@@ -411,6 +412,7 @@ class _ScreenSignupState extends State<ScreenSignup> {
 
                         for (int i = 0; i < totalcabang; i++) {
                           mapCabang.add({
+                            "id_cabang": Uuid().v4(),
                             "daerah_cabang": daerahcabang[i].text,
                             "alamat_cabang": alamatcabang[i].text,
                             "no_telephone_cabang": notelephone[i].text,

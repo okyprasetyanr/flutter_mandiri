@@ -192,7 +192,7 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                     Row(
                       children: [
                         Image.network(
-                          pilihitem[index].urlGambar,
+                          pilihitem[index].geturlGambar,
                           fit: BoxFit.cover,
                           width: 40,
                           height: 40,
@@ -205,16 +205,15 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                           },
                         ),
                         SizedBox(width: 10),
-                        Text(pilihitem[index].qtyItem, style: lv1TextStyle),
+                        Text(pilihitem[index].getqtyItem, style: lv1TextStyle),
                         SizedBox(width: 5),
-                        Text(pilihitem[index].namaItem, style: lv1TextStyle),
+                        Text(pilihitem[index].getnamaItem, style: lv1TextStyle),
                       ],
-                      //komentar aja
                     ),
                     Row(
                       children: [
                         Text(
-                          formatUang(pilihitem[index].hargaItem),
+                          formatUang(pilihitem[index].gethargaItem),
                           style: lv1TextStyle,
                         ),
                       ],
