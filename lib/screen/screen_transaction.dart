@@ -209,6 +209,7 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                         SizedBox(width: 5),
                         Text(pilihitem[index].namaItem, style: lv1TextStyle),
                       ],
+                      //komentar aja
                     ),
                     Row(
                       children: [
