@@ -18,7 +18,7 @@ class ModelKategori {
 
   static List<ModelKategori> getDataListKategori(DocumentSnapshot data) {
     Map mapdata = data.data() as Map<String, dynamic>;
-    List listkategori = mapdata['kategory'] ?? [];
+    List listkategori = mapdata['kategori'] ?? [];
     return listkategori
         .map(
           (map) => ModelKategori(

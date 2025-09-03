@@ -18,6 +18,7 @@ class LayoutTopBottom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.only(top: 40, left: 10, right: 10),
         child: LayoutBuilder(
