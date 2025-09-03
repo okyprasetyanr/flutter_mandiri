@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/colors/colors.dart';
+import 'package:flutter_mandiri/function/function.dart';
 import 'package:flutter_mandiri/model_data/model_cabang.dart';
 import 'package:flutter_mandiri/model_data/model_item.dart';
 import 'package:flutter_mandiri/model_data/model_kategori.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
+import 'package:flutter_mandiri/style_and_transition/transition_navigator/transition_UpDown.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
+import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -63,7 +66,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   }
 
   Future<void> setupData() async {
-    await _uidUser();
+    await _ambilUidUser();
     await _initCabang();
     if (listCabang.isNotEmpty) {
       if (selectedIDcabang != null && uidUser != null) {
@@ -78,8 +81,6 @@ class _ScreenInventoryState extends State<ScreenInventory> {
         await FirebaseFirestore.instance
             .collection("items")
             .doc(uidUser!)
-            .collection(selectedIDcabang!)
-            .doc("kategori")
             .get();
     if (data.exists && mounted) {
       setState(() {
@@ -106,21 +107,21 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   }
 
   Future<void> _initItem() async {
-    DocumentSnapshot data =
+    QuerySnapshot<Map<String, dynamic>> data =
         await FirebaseFirestore.instance
             .collection("items")
             .doc(uidUser!)
-            .collection(selectedIDcabang!)
-            .doc("item")
+            .collection("items")
             .get();
-    if (data.exists) {
+    if (data.size > 0) {
+      List<ModelItem> item = ModelItem.getDataListItem(data);
       setState(() {
-        listItem = ModelItem.getDataListItem(data);
+        listItem = item;
       });
     }
   }
 
-  Future<void> _uidUser() async {
+  Future<void> _ambilUidUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     uidUser = pref.getString("uid_user");
   }
@@ -142,30 +143,28 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     return Column(
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      isOpen = true;
-                    });
-                  },
-                  label: Text("Menu", style: lv1TextStyle),
-                  icon: Icon(Icons.menu),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 4,
-                    backgroundColor: AppColor.primary,
-                  ),
+            Container(
+              width: 130,
+              margin: EdgeInsets.only(top: 5),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    isOpen = true;
+                  });
+                },
+                label: Text("Menu", style: lv1TextStyle),
+                icon: Icon(Icons.menu),
+                style: ElevatedButton.styleFrom(
+                  elevation: 4,
+                  backgroundColor: AppColor.primary,
                 ),
               ),
             ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Text("Inventory", style: titleTextStyle),
-              ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Text("Inventory", style: titleTextStyle),
             ),
           ],
         ),
@@ -209,49 +208,10 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                 label: Text("Condimen", style: labelTextStyle),
               ),
             ),
+            const SizedBox(width: 10),
           ],
         ),
         const SizedBox(height: 10),
-        Flexible(
-          fit: FlexFit.loose,
-          child: GridView.builder(
-            padding: EdgeInsets.all(10),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: gridviewcount,
-              crossAxisSpacing: 15,
-              mainAxisSpacing: 15,
-            ),
-            itemCount: listItem.length,
-            itemBuilder: (context, index) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      spreadRadius: 1,
-                      blurRadius: 6,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: Image.asset("assets/logo.png"),
-                    ),
-                    Text(listItem[index].getnamaItem, style: lv1TextStyle),
-                    Text(listItem[index].gethargaItem, style: lv1TextStyle),
-                    Text(listItem[index].getqtyitem, style: lv1TextStyle),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
         SizedBox(
           height: 45,
           child: Row(
@@ -279,7 +239,6 @@ class _ScreenInventoryState extends State<ScreenInventory> {
               const SizedBox(width: 10),
               Expanded(
                 child: DropdownButtonFormField<ModelCabang>(
-                  initialValue: listCabang[0],
                   hint: Text("Cabang", style: lv1TextStyle),
                   items:
                       listCabang
@@ -317,6 +276,65 @@ class _ScreenInventoryState extends State<ScreenInventory> {
               ),
               const SizedBox(width: 10),
             ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Flexible(
+          fit: FlexFit.loose,
+          child: GridView.builder(
+            padding: EdgeInsets.all(5),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: gridviewcount,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
+            ),
+            itemCount: listItem.length,
+            itemBuilder: (context, index) {
+              return Material(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                elevation: 4,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  onTap: () {},
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          fit: FlexFit.loose,
+                          child: Center(child: Image.asset("assets/logo.png")),
+                        ),
+                        const SizedBox(height: 5),
+                        Center(
+                          child: Text(
+                            listItem[index].getnamaItem,
+                            style: lv0TextStyle,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          formatUang(listItem[index].gethargaItem),
+                          style: lv0TextStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Qty", style: lv0TextStyle),
+                            Text(
+                              listItem[index].getqtyitem,
+                              style: lv0TextStyleRED,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -406,12 +424,16 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                       namaItem: namaItemController.text,
                       idItem: Uuid().v4(),
                       hargaItem: hargaItemController.text,
-                      idKategoriItem: selectedIdkategori!,
+                      idKategoriItem: "321",
                       statusCondiment: false,
                       urlGambar: "",
                       qtyItem: "0",
+                      idCabang: selectedIDcabang!,
                     );
-                    item.pushData(uidUser!, selectedIDcabang!);
+                    item.pushData(uidUser!);
+                    setState(() {
+                      _initItem();
+                    });
                   },
                   label: Text("Simpan", style: lv1TextStyle),
                   icon: Icon(Icons.save, color: Colors.black),
@@ -432,12 +454,27 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     return AnimatedPositioned(
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      left: isOpen ? 0 : -250,
+      left: isOpen ? 0 : -290,
       top: 0,
       bottom: 0,
       child: Container(
+        margin: EdgeInsets.only(top: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(15),
+            bottomRight: Radius.circular(15),
+          ),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.4),
+              // offset: Offset(3, 0),
+              blurRadius: 10,
+              blurStyle: BlurStyle.outer,
+            ),
+          ],
+        ),
         width: 250,
-        color: Colors.white,
         padding: EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -448,40 +485,71 @@ class _ScreenInventoryState extends State<ScreenInventory> {
               child: Material(
                 elevation: 4,
                 borderRadius: BorderRadius.circular(10),
-                child: listTileText(
-                  () => setState(() {
-                    isOpen = false;
-                  }),
-                  "Back",
-                  Icon(Icons.keyboard_backspace_rounded),
+                child: ListTile(
+                  onTap:
+                      () => setState(() {
+                        isOpen = false;
+                      }),
+                  leading: Icon(Icons.keyboard_backspace_rounded),
+                  title: Text("Back", style: lv2TextStyle),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            Expanded(child: Column(children: [
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    color: Colors.transparent,
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(10),
+                      child: InkWell(
+                        onTap: () {},
+                        borderRadius: BorderRadius.circular(10),
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text("Kategori", style: lv2TextStyle),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    color: Colors.transparent,
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(10),
+                      child: InkWell(
+                        onTap: () {
+                          if (ModalRoute.of(context)!.isCurrent) {
+                            customSnackBar(
+                              context,
+                              "Anda sudah berada diHalaman tersebut",
+                            );
+                          } else {
+                            navUpDownTransition(
+                              context,
+                              ScreenInventory(),
+                              false,
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text("Inventory", style: lv2TextStyle),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
-              )),
+              ),
+            ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget listTileText(VoidCallback onTap, String text, Widget? leading) {
-    return ListTile(
-      onTap: onTap,
-      leading: leading,
-      title: Text(text, style: lv2TextStyle),
-    );
-  }
-
-  Widget buttoncustom(VoidCallback onPressed, String text, TextStyle style) {
-    return Material(
-      elevation: 4,
-      borderRadius: BorderRadius.circular(15),
-      child: ElevatedButton.icon(
-        onPressed: () {},
-        label: Text(text, style: style),
       ),
     );
   }

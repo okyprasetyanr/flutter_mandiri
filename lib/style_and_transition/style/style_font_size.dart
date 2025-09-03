@@ -37,6 +37,12 @@ final lv0TextStyle = GoogleFonts.poppins(
   fontSize: 12,
 );
 
+final lv0TextStyleRED = GoogleFonts.poppins(
+  color: const Color.fromARGB(255, 255, 0, 0),
+  fontWeight: FontWeight.w300,
+  fontSize: 12,
+);
+
 final lv2TextStyle = GoogleFonts.poppins(
   color: Colors.black,
   fontWeight: FontWeight.w300,
