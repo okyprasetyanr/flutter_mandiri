@@ -7,7 +7,9 @@ import 'package:flutter_mandiri/model_data/model_item.dart';
 import 'package:flutter_mandiri/model_data/model_kategori.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/style_and_transition/transition_navigator/transition_UpDown.dart';
+import 'package:flutter_mandiri/style_and_transition/transition_navigator/transition_UpDown.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
+import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
 import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -28,6 +30,8 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   String? selectedkategori;
   String? selectedIdkategori;
   String? selectedstatus;
+  Map<String, bool> sortir = {'nama_item': true, 'qty_item': true};
+  String keySortir = "nama_item";
   List<ModelCabang> listCabang = [];
   List<ModelKategori> listKategori = [];
   List<ModelItem> listItem = [];
@@ -40,14 +44,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   TextEditingController kodeBarcodeController = TextEditingController();
   final List<String> status = ["Active", "Deactive"];
 
-  final List<String> filter = [
-    "A-Z",
-    "Z-A",
-    "Terbaru",
-    "Terlama",
-    "Stock -",
-    "Stock +",
-  ];
+  final List<String> filter = ["A-Z", "Z-A", "Stock -", "Stock +"];
 
   @override
   void dispose() {
@@ -112,6 +109,8 @@ class _ScreenInventoryState extends State<ScreenInventory> {
             .collection("items")
             .doc(uidUser!)
             .collection("items")
+            .where('id_cabang', isEqualTo: selectedIDcabang)
+            .orderBy(keySortir, descending: sortir[keySortir]!)
             .get();
     if (data.size > 0) {
       List<ModelItem> item = ModelItem.getDataListItem(data);
@@ -128,8 +127,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
-    gridviewcount = orientation == Orientation.portrait ? 5 : 4;
+    gridviewcount = 4;
     return LayoutTopBottom(
       heightRequested: 1.8,
       widthRequested: 2,
@@ -189,8 +187,8 @@ class _ScreenInventoryState extends State<ScreenInventory> {
               ),
             ),
             const SizedBox(width: 10),
-            Expanded(
-              flex: 1,
+            Flexible(
+              fit: FlexFit.loose,
               child: ElevatedButton.icon(
                 icon: Icon(Icons.check),
                 style: ButtonStyle(
@@ -205,7 +203,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                     check = !check;
                   });
                 },
-                label: Text("Condimen", style: labelTextStyle),
+                label: Text("Condiment", style: labelTextStyle),
               ),
             ),
             const SizedBox(width: 10),
@@ -233,6 +231,32 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                   onChanged:
                       (value) => (setState(() {
                         selectedfilter = value;
+                        switch (value) {
+                          case "A-Z":
+                            keySortir = "nama_item";
+                            sortir[keySortir] = false;
+                            break;
+
+                          case "Z-A":
+                            keySortir = "nama_item";
+                            sortir[keySortir] = true;
+                            break;
+
+                          case "Stock -":
+                            keySortir = "qty_item";
+                            sortir[keySortir] = false;
+                            break;
+
+                          case "Stock +":
+                            keySortir = "qty_item";
+                            sortir[keySortir] = true;
+                            break;
+
+                          default:
+                            keySortir = "nama_item";
+                        }
+
+                        _initItem();
                       })),
                 ),
               ),
@@ -296,7 +320,11 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                 elevation: 4,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15),
-                  onTap: () {},
+                  onTap: () {
+                    namaItemController.text = listItem[index].getnamaItem;
+                    hargaItemController.text = listItem[index].getnamaItem;
+                    kodeBarcodeController.text = listItem[index].getBarcode;
+                  },
                   child: Padding(
                     padding: EdgeInsetsGeometry.all(5),
                     child: Column(
@@ -321,10 +349,11 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text("Qty", style: lv0TextStyle),
                             Text(
-                              listItem[index].getqtyitem,
+                              formatQty(listItem[index].getqtyitem),
                               style: lv0TextStyleRED,
                             ),
                           ],
@@ -346,62 +375,75 @@ class _ScreenInventoryState extends State<ScreenInventory> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Align(
-          alignment: Alignment.topRight,
-          child: Text("Detail", style: titleTextStyle),
-        ),
-        const SizedBox(height: 30),
-        Flexible(
-          fit: FlexFit.loose,
-          child: customTextField("Nama Item", namaItemController),
-        ),
-        const SizedBox(height: 10),
-        Flexible(
-          fit: FlexFit.loose,
-          child: customTextField("Kode/Barcode", kodeBarcodeController),
-        ),
-        const SizedBox(height: 10),
-        Flexible(
-          fit: FlexFit.loose,
-          child: customTextField("Harga", hargaItemController),
-        ),
-        const SizedBox(height: 10),
-        Flexible(
-          fit: FlexFit.loose,
-          child: Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<ModelKategori>(
-                  items:
-                      listKategori
-                          .map(
-                            (map) => DropdownMenuItem<ModelKategori>(
-                              value: map,
-                              child: Text(map.getnamaKategori),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    selectedkategori = value!.getnamaKategori;
-                    selectedIdkategori = value.getidKategori;
-                  },
+        Expanded(
+          flex: 3,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Text("Detail", style: titleTextStyle),
                 ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  controller: TextEditingController(text: selectedcabang),
-                  decoration: InputDecoration(
-                    enabled: false,
-                    labelText: "Cabang",
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                const SizedBox(height: 30),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: customTextField("Nama Item", namaItemController),
+                ),
+                const SizedBox(height: 10),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: customTextField("Kode/Barcode", kodeBarcodeController),
+                ),
+                const SizedBox(height: 10),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: customTextField("Harga", hargaItemController),
+                ),
+                const SizedBox(height: 10),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<ModelKategori>(
+                          items:
+                              listKategori
+                                  .map(
+                                    (map) => DropdownMenuItem<ModelKategori>(
+                                      value: map,
+                                      child: Text(map.getnamaKategori),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (value) {
+                            selectedkategori = value!.getnamaKategori;
+                            selectedIdkategori = value.getidKategori;
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: TextEditingController(
+                            text: selectedcabang,
+                          ),
+                          decoration: InputDecoration(
+                            enabled: false,
+                            labelText: "Cabang",
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 10),
         Flexible(
           child: Row(
             children: [
@@ -427,12 +469,16 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                       idKategoriItem: "321",
                       statusCondiment: false,
                       urlGambar: "",
-                      qtyItem: "0",
+                      qtyItem: 0,
                       idCabang: selectedIDcabang!,
+                      barcode: kodeBarcodeController.text,
                     );
                     item.pushData(uidUser!);
                     setState(() {
                       _initItem();
+                      namaItemController.clear();
+                      hargaItemController.clear();
+                      kodeBarcodeController.clear;
                     });
                   },
                   label: Text("Simpan", style: lv1TextStyle),

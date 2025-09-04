@@ -9,3 +9,8 @@ String formatUang(String nominal) {
   final convertnominal = double.tryParse(nominal);
   return format.format(convertnominal);
 }
+
+String formatQty(double qty) {
+  final format = NumberFormat("##.##");
+  return format.format(qty);
+}

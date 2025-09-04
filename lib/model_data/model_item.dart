@@ -6,8 +6,9 @@ class ModelItem {
       _hargaItem,
       _idKategoriItem,
       _urlGambar,
-      _qtyItem,
-      _idCabang;
+      _idCabang,
+      _barcode;
+  double _qtyItem;
   final bool _statusCondiment;
 
   ModelItem({
@@ -17,8 +18,9 @@ class ModelItem {
     required String idKategoriItem,
     required bool statusCondiment,
     required String urlGambar,
-    required String qtyItem,
+    required double qtyItem,
     required String idCabang,
+    required String barcode,
   }) : _namaItem = namaItem,
        _idItem = idItem,
        _hargaItem = hargaItem,
@@ -26,7 +28,8 @@ class ModelItem {
        _statusCondiment = statusCondiment,
        _urlGambar = urlGambar,
        _qtyItem = qtyItem,
-       _idCabang = idCabang;
+       _idCabang = idCabang,
+       _barcode = barcode;
 
   String get getnamaItem => _namaItem;
   String get getidItem => _idItem;
@@ -34,8 +37,9 @@ class ModelItem {
   String get getidKategoriItem => _idKategoriItem;
   bool get getstatusCondiment => _statusCondiment;
   String get geturlGambar => _urlGambar;
-  String get getqtyitem => _qtyItem;
+  double get getqtyitem => _qtyItem;
   String get getidCabang => _idCabang;
+  String get getBarcode => _barcode;
 
   set setnamaItem(String value) => _namaItem;
   set setidItem(String value) => _idItem;
@@ -43,8 +47,9 @@ class ModelItem {
   set setidKategoriItem(String value) => _idKategoriItem;
   set setstatusCondiment(bool value) => _statusCondiment;
   set seturlGambar(String value) => _urlGambar;
-  set setqtyItem(String value) => _qtyItem;
+  set setqtyItem(double value) => _qtyItem;
   set setidCabng(String value) => _idCabang;
+  set setBarcode(String value) => _barcode;
 
   Map<String, dynamic> convertToMap() {
     return {
@@ -56,6 +61,7 @@ class ModelItem {
       'url_gambar': geturlGambar,
       'qty_item': getqtyitem,
       'id_cabang': getidCabang,
+      'barcode': getBarcode,
     };
   }
 
@@ -78,8 +84,9 @@ class ModelItem {
         idKategoriItem: dataitem['id_kategori'],
         statusCondiment: dataitem['status_condiment'],
         urlGambar: dataitem['url_gambar'],
-        qtyItem: dataitem['qty_item'],
+        qtyItem: dataitem['qty_item'].toDouble(),
         idCabang: dataitem['id_cabang'],
+        barcode: dataitem['barcode'],
       );
     }).toList();
   }
