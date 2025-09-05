@@ -31,6 +31,12 @@ final lv1TextStyle = GoogleFonts.poppins(
   fontSize: 15,
 );
 
+final lv1TextStyleWhite = GoogleFonts.poppins(
+  color: Colors.white,
+  fontWeight: FontWeight.w300,
+  fontSize: 15,
+);
+
 final lv0TextStyle = GoogleFonts.poppins(
   color: Colors.black,
   fontWeight: FontWeight.w300,

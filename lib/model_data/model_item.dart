@@ -1,17 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ModelItem {
-  final String _namaItem,
+  final String _uidUser,
+      _namaItem,
       _idItem,
       _hargaItem,
       _idKategoriItem,
       _urlGambar,
       _idCabang,
       _barcode;
-  double _qtyItem;
+  final double _qtyItem;
   final bool _statusCondiment;
 
   ModelItem({
+    required String uidUser,
     required String namaItem,
     required String idItem,
     required String hargaItem,
@@ -21,7 +23,8 @@ class ModelItem {
     required double qtyItem,
     required String idCabang,
     required String barcode,
-  }) : _namaItem = namaItem,
+  }) : _uidUser = uidUser,
+       _namaItem = namaItem,
        _idItem = idItem,
        _hargaItem = hargaItem,
        _idKategoriItem = idKategoriItem,
@@ -31,6 +34,7 @@ class ModelItem {
        _idCabang = idCabang,
        _barcode = barcode;
 
+  String get getuidUser => _uidUser;
   String get getnamaItem => _namaItem;
   String get getidItem => _idItem;
   String get gethargaItem => _hargaItem;
@@ -41,6 +45,7 @@ class ModelItem {
   String get getidCabang => _idCabang;
   String get getBarcode => _barcode;
 
+  set setuidUser(String value) => _uidUser;
   set setnamaItem(String value) => _namaItem;
   set setidItem(String value) => _idItem;
   set sethargaItem(String value) => _hargaItem;
@@ -53,6 +58,7 @@ class ModelItem {
 
   Map<String, dynamic> convertToMap() {
     return {
+      'uid_user': getuidUser,
       'nama_item': getnamaItem,
       'harga_item': gethargaItem,
       'id_item': getidItem,
@@ -66,18 +72,14 @@ class ModelItem {
   }
 
   Future<void> pushData(String uidUser) async {
-    await FirebaseFirestore.instance
-        .collection("items")
-        .doc(uidUser)
-        .collection("items")
-        .doc(getidItem)
-        .set(convertToMap());
+    await FirebaseFirestore.instance.collection("items").add(convertToMap());
   }
 
   static List<ModelItem> getDataListItem(QuerySnapshot data) {
     return data.docs.map((map) {
       final dataitem = map.data() as Map<String, dynamic>;
       return ModelItem(
+        uidUser: dataitem['uid_user'],
         namaItem: dataitem['nama_item'],
         idItem: map.id,
         hargaItem: dataitem['harga_item'],

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 String formatUang(String nominal) {
@@ -13,4 +14,8 @@ String formatUang(String nominal) {
 String formatQty(double qty) {
   final format = NumberFormat("##.##");
   return format.format(qty);
+}
+
+Map<String, dynamic> convertToMap(Widget toContext, String text) {
+  return {'toContext': toContext, 'text_menu': text};
 }

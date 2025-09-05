@@ -37,8 +37,6 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
     Orientation rotasi = MediaQuery.of(context).orientation;
     gridviewcount = rotasi == Orientation.portrait ? 5 : 4;
     return LayoutTopBottom(
-      heightRequested: 2,
-      widthRequested: 2,
       widgetTop: layoutTop(),
       widgetBottom: layoutBottom(),
       widgetNavigation: navigationGesture(),

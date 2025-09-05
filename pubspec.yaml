@@ -16,6 +16,7 @@ dependencies:
   cloud_firestore: ^6.0.0
   shared_preferences: any
   intl: any
+  flutter_switch: any
 
 dev_dependencies:
   flutter_test:
