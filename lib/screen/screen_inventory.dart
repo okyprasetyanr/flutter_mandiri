@@ -9,7 +9,6 @@ import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart'
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
 import 'package:flutter_mandiri/widget/widget_navigation_gesture.dart';
 import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
