@@ -7,9 +7,7 @@ import 'package:flutter_mandiri/model_data/model_item.dart';
 import 'package:flutter_mandiri/model_data/model_kategori.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/style_and_transition/transition_navigator/transition_UpDown.dart';
-import 'package:flutter_mandiri/style_and_transition/transition_navigator/transition_UpDown.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
-import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
 import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -109,7 +107,6 @@ class _ScreenInventoryState extends State<ScreenInventory> {
             .collection("items")
             .doc(uidUser!)
             .collection("items")
-            .where('id_cabang', isEqualTo: selectedIDcabang)
             .orderBy(keySortir, descending: sortir[keySortir]!)
             .get();
     if (data.size > 0) {
