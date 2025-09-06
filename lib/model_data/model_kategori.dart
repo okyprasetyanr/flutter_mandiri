@@ -16,9 +16,17 @@ class ModelKategori {
   set setnamKategori(String value) => _namaKategori;
   set setidKategori(String value) => _idkategori;
 
-  static List<ModelKategori> getDataListKategori(DocumentSnapshot data) {
-    Map mapdata = data.data() as Map<String, dynamic>;
-    List listkategori = mapdata['kategori'] ?? [];
+  Map<String, dynamic> convertToMap() {
+    return {'nama_kategori': getnamaKategori, 'id_kategori': getidKategori};
+  }
+
+  Future<void> pushData(String uidUser) async {
+    await FirebaseFirestore.instance.collection("kategori").add(convertToMap());
+  }
+
+  static List<ModelKategori> getDataListKategori(QuerySnapshot data) {
+    Map mapdata = data as Map<String, dynamic>;
+    List listkategori = mapdata['kategory'] ?? [];
     return listkategori
         .map(
           (map) => ModelKategori(

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LayoutTopBottom extends StatelessWidget {
-  final double heightRequested;
-  final double widthRequested;
   final Widget widgetTop;
   final Widget widgetBottom;
   final Widget widgetNavigation;
   const LayoutTopBottom({
     super.key,
-    required this.heightRequested,
-    required this.widthRequested,
     required this.widgetTop,
     required this.widgetBottom,
     required this.widgetNavigation,
@@ -33,15 +29,15 @@ class LayoutTopBottom extends StatelessWidget {
                       Positioned(
                         top: 0,
                         child: SizedBox(
-                          height: height / heightRequested,
+                          height: height / 2,
                           width: width,
                           child: widgetTop,
                         ),
                       ),
                       Positioned(
-                        top: height / heightRequested,
+                        top: height / 2,
                         child: SizedBox(
-                          height: height / heightRequested,
+                          height: height / 2,
                           width: width,
                           child: widgetBottom,
                         ),
@@ -55,15 +51,15 @@ class LayoutTopBottom extends StatelessWidget {
                       Positioned(
                         left: 0,
                         child: SizedBox(
-                          width: width / widthRequested,
+                          width: width / 2,
                           height: height,
                           child: widgetTop,
                         ),
                       ),
                       Positioned(
-                        left: width / widthRequested,
+                        left: width / 2,
                         child: SizedBox(
-                          width: width / widthRequested,
+                          width: width / 2,
                           height: height,
                           child: widgetBottom,
                         ),
