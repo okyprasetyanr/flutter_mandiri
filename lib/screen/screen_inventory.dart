@@ -110,14 +110,9 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     QuerySnapshot<Map<String, dynamic>> data =
         await FirebaseFirestore.instance
             .collection("items")
-<<<<<<< HEAD
-            .doc(uidUser!)
-            .collection("items")
-=======
             .where('status_condiment', isEqualTo: checkcondiment)
             .where('id_cabang', isEqualTo: selectedIDcabang)
             .where('uid_user', isEqualTo: uidUser)
->>>>>>> 73a920b6c3484617639c867b818071f8da910f4a
             .orderBy(keySortir, descending: sortir[keySortir]!)
             .get();
     if (data.size > 0) {
