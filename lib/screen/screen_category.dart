@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
 import 'package:flutter_mandiri/widget/widget_navigation_gesture.dart';
 
@@ -35,7 +36,15 @@ class _ScreenCategoryState extends State<ScreenCategory> {
   }
 
   Widget layoutTop() {
-    return Text("abcdefghij");
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.topRight,
+          child: Text("Kategori", style: labelTextStyle),
+        ),
+        ListView(),
+      ],
+    );
   }
 
   Widget layoutBottom() {

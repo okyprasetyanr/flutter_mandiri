@@ -5,6 +5,7 @@ import 'package:flutter_mandiri/function/function.dart';
 import 'package:flutter_mandiri/model_data/model_cabang.dart';
 import 'package:flutter_mandiri/model_data/model_item.dart';
 import 'package:flutter_mandiri/model_data/model_kategori.dart';
+import 'package:flutter_mandiri/screen/screen_category.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
 import 'package:flutter_mandiri/widget/widget_navigation_gesture.dart';
@@ -22,7 +23,7 @@ class ScreenInventory extends StatefulWidget {
 class _ScreenInventoryState extends State<ScreenInventory> {
   final List<Map<String, dynamic>> contentNavGesture = [
     {"toContext": ScreenInventory(), "text_menu": "Inventory", "onTap": () {}},
-    {"toContext": ScreenInventory(), "text_menu": "Kategori", "onTap": () {}},
+    {"toContext": ScreenCategory(), "text_menu": "Kategori", "onTap": () {}},
   ];
 
   String? uidUser;
@@ -44,6 +45,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _gotoPage(0);
       setupData();
     });
   }
@@ -56,6 +58,8 @@ class _ScreenInventoryState extends State<ScreenInventory> {
       TextEditingController(text: selectedcabang);
   TextEditingController hargaItemController = TextEditingController();
   TextEditingController kodeBarcodeController = TextEditingController();
+  PageController pageController = PageController();
+  int currentPage = 0;
   final List<String> status = ["Active", "Deactive"];
 
   final List<String> filter = ["A-Z", "Z-A", "Stock -", "Stock +"];
@@ -77,6 +81,17 @@ class _ScreenInventoryState extends State<ScreenInventory> {
         _initItem();
       }
     }
+  }
+
+  void _gotoPage(int page) {
+    setState(() {
+      currentPage = page;
+    });
+    pageController.animateToPage(
+      page,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
   }
 
   Future<void> _initKategori() async {
@@ -167,210 +182,293 @@ class _ScreenInventoryState extends State<ScreenInventory> {
             ),
             Align(
               alignment: Alignment.topRight,
-              child: Text("Inventory", style: titleTextStyle),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 2,
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: "Search",
-                  labelStyle: labelTextStyle,
-                  hintText: "Search...",
-                  hintStyle: hintTextStyle,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Flexible(
-              fit: FlexFit.loose,
-              child: ElevatedButton.icon(
-                icon: Icon(Icons.check),
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    checkcondiment ? AppColor.primary : Colors.white,
-                  ),
-                  elevation: WidgetStateProperty.all(4),
-                  padding: WidgetStateProperty.all(EdgeInsets.all(15)),
-                ),
-                onPressed: () {
-                  setState(() {
-                    checkcondiment = !checkcondiment;
-                    _initItem();
-                  });
-                },
-                label: Text("Condiment", style: labelTextStyle),
-              ),
-            ),
-            const SizedBox(width: 10),
-          ],
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 45,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(width: 10),
-              Expanded(
-                child: DropdownButtonFormField<dynamic>(
-                  initialValue: selectedfilter,
-                  hint: Text("Filter", style: lv1TextStyle),
-                  items:
-                      filter
-                          .map(
-                            (map) =>
-                                DropdownMenuItem(value: map, child: Text(map)),
-                          )
-                          .toList(),
-
-                  onChanged:
-                      (value) => (setState(() {
-                        selectedfilter = value;
-                        switch (value) {
-                          case "A-Z":
-                            keySortir = "nama_item";
-                            sortir[keySortir] = false;
-                            break;
-
-                          case "Z-A":
-                            keySortir = "nama_item";
-                            sortir[keySortir] = true;
-                            break;
-
-                          case "Stock -":
-                            keySortir = "qty_item";
-                            sortir[keySortir] = false;
-                            break;
-
-                          case "Stock +":
-                            keySortir = "qty_item";
-                            sortir[keySortir] = true;
-                            break;
-
-                          default:
-                            keySortir = "nama_item";
-                        }
-
-                        _initItem();
-                      })),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: DropdownButtonFormField<ModelCabang>(
-                  hint: Text(selectedcabang ?? "Cabang", style: lv1TextStyle),
-                  items:
-                      listCabang
-                          .map(
-                            (map) => DropdownMenuItem(
-                              value: map,
-                              child: Text(map.getdaerahCabang),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedcabang = value!.getdaerahCabang;
-                      selectedIDcabang = value.getidCabang;
-                      _initItem();
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  hint: Text("Status"),
-                  items:
-                      status
-                          .map(
-                            (map) =>
-                                DropdownMenuItem(value: map, child: Text(map)),
-                          )
-                          .toList(),
-                  onChanged:
-                      (value) => (setState(() {
-                        selectedstatus = value;
-                      })),
-                ),
-              ),
-              const SizedBox(width: 10),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        Flexible(
-          fit: FlexFit.loose,
-          child: GridView.builder(
-            padding: EdgeInsets.all(5),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: gridviewcount,
-              crossAxisSpacing: 15,
-              mainAxisSpacing: 15,
-            ),
-            itemCount: listItem.length,
-            itemBuilder: (context, index) {
-              return Material(
+              child: Material(
                 color: Colors.white,
+                elevation: 3,
                 borderRadius: BorderRadius.circular(15),
-                elevation: 4,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15),
                   onTap: () {
-                    namaItemController.text = listItem[index].getnamaItem;
-                    hargaItemController.text = listItem[index].getnamaItem;
-                    kodeBarcodeController.text = listItem[index].getBarcode;
+                    if (currentPage < 1) {
+                      _gotoPage(0);
+                    } else {
+                      _gotoPage(1);
+                    }
                   },
                   child: Padding(
-                    padding: EdgeInsetsGeometry.all(5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    child: Row(
                       children: [
-                        Flexible(
-                          fit: FlexFit.loose,
-                          child: Center(child: Image.asset("assets/logo.png")),
-                        ),
-                        const SizedBox(height: 5),
-                        Center(
-                          child: Text(
-                            listItem[index].getnamaItem,
-                            style: lv0TextStyle,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          formatUang(listItem[index].gethargaItem),
-                          style: lv0TextStyle,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("Qty", style: lv0TextStyle),
-                            Text(
-                              formatQty(listItem[index].getqtyitem),
-                              style: lv0TextStyleRED,
-                            ),
-                          ],
-                        ),
+                        Text("Inventory", style: titleTextStyle),
+                        Icon(Icons.swap_horiz_outlined, size: 30),
                       ],
                     ),
                   ),
                 ),
-              );
-            },
+              ),
+            ),
+          ],
+        ),
+
+        Expanded(
+          child: PageView(
+            controller: pageController,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: TextField(
+                          decoration: InputDecoration(
+                            labelText: "Search",
+                            labelStyle: labelTextStyle,
+                            hintText: "Search...",
+                            hintStyle: hintTextStyle,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: Icon(Icons.check),
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(
+                              checkcondiment ? AppColor.primary : Colors.white,
+                            ),
+                            elevation: WidgetStateProperty.all(4),
+                            padding: WidgetStateProperty.all(
+                              EdgeInsets.all(15),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              checkcondiment = !checkcondiment;
+                              _initItem();
+                            });
+                          },
+                          label: Text("Condiment", style: labelTextStyle),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 45,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: DropdownButtonFormField<dynamic>(
+                                initialValue: selectedfilter,
+                                hint: Text("Filter", style: lv1TextStyle),
+                                items:
+                                    filter
+                                        .map(
+                                          (map) => DropdownMenuItem(
+                                            value: map,
+                                            child: Text(map),
+                                          ),
+                                        )
+                                        .toList(),
+
+                                onChanged:
+                                    (value) => (setState(() {
+                                      selectedfilter = value;
+                                      switch (value) {
+                                        case "A-Z":
+                                          keySortir = "nama_item";
+                                          sortir[keySortir] = false;
+                                          break;
+
+                                        case "Z-A":
+                                          keySortir = "nama_item";
+                                          sortir[keySortir] = true;
+                                          break;
+
+                                        case "Stock -":
+                                          keySortir = "qty_item";
+                                          sortir[keySortir] = false;
+                                          break;
+
+                                        case "Stock +":
+                                          keySortir = "qty_item";
+                                          sortir[keySortir] = true;
+                                          break;
+
+                                        default:
+                                          keySortir = "nama_item";
+                                      }
+
+                                      _initItem();
+                                    })),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: DropdownButtonFormField<ModelCabang>(
+                                hint: Text(
+                                  selectedcabang ?? "Cabang",
+                                  style: lv1TextStyle,
+                                ),
+                                items:
+                                    listCabang
+                                        .map(
+                                          (map) => DropdownMenuItem(
+                                            value: map,
+                                            child: Text(map.getdaerahCabang),
+                                          ),
+                                        )
+                                        .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedcabang = value!.getdaerahCabang;
+                                    selectedIDcabang = value.getidCabang;
+                                    _initItem();
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                hint: Text("Status"),
+                                items:
+                                    status
+                                        .map(
+                                          (map) => DropdownMenuItem(
+                                            value: map,
+                                            child: Text(map),
+                                          ),
+                                        )
+                                        .toList(),
+                                onChanged:
+                                    (value) => (setState(() {
+                                      selectedstatus = value;
+                                    })),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      GridView.builder(
+                        padding: EdgeInsets.all(5),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: gridviewcount,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                        ),
+                        itemCount: listItem.length,
+                        itemBuilder: (context, index) {
+                          return Material(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            elevation: 4,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(15),
+                              onTap: () {
+                                namaItemController.text =
+                                    listItem[index].getnamaItem;
+                                hargaItemController.text =
+                                    listItem[index].getnamaItem;
+                                kodeBarcodeController.text =
+                                    listItem[index].getBarcode;
+                              },
+                              child: Padding(
+                                padding: EdgeInsetsGeometry.all(5),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Flexible(
+                                      fit: FlexFit.loose,
+                                      child: Center(
+                                        child: Image.asset("assets/logo.png"),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Center(
+                                      child: Text(
+                                        listItem[index].getnamaItem,
+                                        style: lv0TextStyle,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      formatUang(listItem[index].gethargaItem),
+                                      style: lv0TextStyle,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text("Qty", style: lv0TextStyle),
+                                        Text(
+                                          formatQty(listItem[index].getqtyitem),
+                                          style: lv0TextStyleRED,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: "Search",
+                        labelStyle: labelTextStyle,
+                        hintText: "Search...",
+                        hintStyle: hintTextStyle,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ListView.builder(
+                    itemCount: listKategori.length,
+                    itemBuilder: (context, index) {
+                      return Text(
+                        listKategori[index].getnamaKategori,
+                        style: lv1TextStyle,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ],
@@ -378,191 +476,200 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   }
 
   Widget bottomLayout() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return PageView(
       children: [
-        Align(
-          alignment: Alignment.topRight,
-          child: Text("Detail", style: titleTextStyle),
-        ),
-        Expanded(
-          flex: 2,
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 0),
-            children: [
-              customTextField("Nama Item", namaItemController),
-              const SizedBox(height: 10),
-              customTextField("Kode/Barcode", kodeBarcodeController),
-              const SizedBox(height: 10),
-              customTextField("Harga", hargaItemController),
-              const SizedBox(height: 10),
-              Row(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: Text("Detail", style: titleTextStyle),
+            ),
+            Expanded(
+              flex: 2,
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.only(
+                  top: 20,
+                  left: 10,
+                  right: 10,
+                  bottom: 0,
+                ),
+                children: [
+                  customTextField("Nama Item", namaItemController),
+                  const SizedBox(height: 10),
+                  customTextField("Kode/Barcode", kodeBarcodeController),
+                  const SizedBox(height: 10),
+                  customTextField("Harga", hargaItemController),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<ModelKategori>(
+                          hint: Text(
+                            selectedkategori ?? "Kategori..",
+                            style: hintTextStyle,
+                          ),
+                          items:
+                              listKategori
+                                  .map(
+                                    (map) => DropdownMenuItem<ModelKategori>(
+                                      value: map,
+                                      child: Text(map.getnamaKategori),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (value) {
+                            selectedkategori = value!.getnamaKategori;
+                            selectedIdkategori = value.getidKategori;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          enabled: false,
+                          controller: cabangItemController,
+                          decoration: const InputDecoration(
+                            labelText: "Cabang",
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => condiment = !condiment),
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 500),
+                            width: 100,
+                            padding: EdgeInsets.only(top: 5, bottom: 5),
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18),
+                              color: condiment ? Colors.green : Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: (condiment
+                                          ? Colors.black
+                                          : AppColor.primary)
+                                      .withValues(alpha: 0.4),
+                                  blurStyle: BlurStyle.outer,
+                                  blurRadius: 15,
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              children: [
+                                AnimatedPositioned(
+                                  curve: Curves.easeInOut,
+                                  left: condiment ? -50 : 5,
+                                  duration: Duration(milliseconds: 500),
+                                  child: Icon(
+                                    Icons.check_circle_outline_rounded,
+                                    size: 30,
+                                  ),
+                                ),
+                                AnimatedPositioned(
+                                  curve: Curves.easeInOut,
+                                  left: condiment ? 100 : 150,
+                                  duration: Duration(milliseconds: 500),
+                                  child: Icon(
+                                    Icons.check_circle_outline_rounded,
+                                    size: 30,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                AnimatedPositioned(
+                                  curve: Curves.easeInOut,
+                                  left: condiment ? -100 : 38,
+                                  top: 4,
+                                  duration: Duration(milliseconds: 500),
+                                  child: Text("Normal", style: lv1TextStyle),
+                                ),
+                                AnimatedPositioned(
+                                  curve: Curves.easeInOut,
+                                  left: condiment ? 10 : 150,
+                                  top: 4,
+                                  duration: Duration(milliseconds: 500),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Condiment",
+                                      style: lv1TextStyleWhite,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            Expanded(
+              flex: 1,
+              child: Row(
                 children: [
                   Expanded(
-                    child: DropdownButtonFormField<ModelKategori>(
-                      hint: Text(
-                        selectedkategori ?? "Kategori..",
-                        style: hintTextStyle,
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+                      label: Text("Hapus", style: lv1TextStyle),
+                      icon: Icon(Icons.delete, color: Colors.black),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 4,
+                        backgroundColor: AppColor.delete,
                       ),
-                      items:
-                          listKategori
-                              .map(
-                                (map) => DropdownMenuItem<ModelKategori>(
-                                  value: map,
-                                  child: Text(map.getnamaKategori),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (value) {
-                        selectedkategori = value!.getnamaKategori;
-                        selectedIdkategori = value.getidKategori;
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        if (namaItemController.text.isEmpty ||
+                            hargaItemController.text.isEmpty ||
+                            kodeBarcodeController.text.isEmpty ||
+                            selectedkategori == null) {
+                          // kasih alert/snackbar
+                          customSnackBar(context, "Data belum lengkap!");
+                        } else {
+                          final item = ModelItem(
+                            uidUser: uidUser!,
+                            namaItem: namaItemController.text,
+                            idItem: Uuid().v4(),
+                            hargaItem: hargaItemController.text,
+                            idKategoriItem: "321",
+                            statusCondiment: false,
+                            urlGambar: "",
+                            qtyItem: 0,
+                            idCabang: selectedIDcabang!,
+                            barcode: kodeBarcodeController.text,
+                          );
+                          item.pushData(uidUser!);
+                          setState(() {
+                            namaItemController.clear();
+                            hargaItemController.clear();
+                            kodeBarcodeController.clear();
+                            _initItem();
+                          });
+                        }
                       },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      enabled: false,
-                      controller: cabangItemController,
-                      decoration: const InputDecoration(
-                        labelText: "Cabang",
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => condiment = !condiment),
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 500),
-                        width: 100,
-                        padding: EdgeInsets.only(top: 5, bottom: 5),
-                        height: 40,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          color: condiment ? Colors.green : Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: (condiment
-                                      ? Colors.black
-                                      : AppColor.primary)
-                                  .withValues(alpha: 0.4),
-                              blurStyle: BlurStyle.outer,
-                              blurRadius: 15,
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            AnimatedPositioned(
-                              curve: Curves.easeInOut,
-                              left: condiment ? -50 : 5,
-                              duration: Duration(milliseconds: 500),
-                              child: Icon(
-                                Icons.check_circle_outline_rounded,
-                                size: 30,
-                              ),
-                            ),
-                            AnimatedPositioned(
-                              curve: Curves.easeInOut,
-                              left: condiment ? 100 : 150,
-                              duration: Duration(milliseconds: 500),
-                              child: Icon(
-                                Icons.check_circle_outline_rounded,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                            ),
-                            AnimatedPositioned(
-                              curve: Curves.easeInOut,
-                              left: condiment ? -100 : 38,
-                              top: 4,
-                              duration: Duration(milliseconds: 500),
-                              child: Text("Normal", style: lv1TextStyle),
-                            ),
-                            AnimatedPositioned(
-                              curve: Curves.easeInOut,
-                              left: condiment ? 10 : 150,
-                              top: 4,
-                              duration: Duration(milliseconds: 500),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Condiment",
-                                  style: lv1TextStyleWhite,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      label: Text("Simpan", style: lv1TextStyle),
+                      icon: Icon(Icons.save, color: Colors.black),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 4,
+                        backgroundColor: AppColor.primary,
                       ),
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-
-        Expanded(
-          flex: 1,
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {},
-                  label: Text("Hapus", style: lv1TextStyle),
-                  icon: Icon(Icons.delete, color: Colors.black),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 4,
-                    backgroundColor: AppColor.delete,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    if (namaItemController.text.isEmpty ||
-                        hargaItemController.text.isEmpty ||
-                        kodeBarcodeController.text.isEmpty ||
-                        selectedkategori == null) {
-                      // kasih alert/snackbar
-                      customSnackBar(context, "Data belum lengkap!");
-                    } else {
-                      final item = ModelItem(
-                        uidUser: uidUser!,
-                        namaItem: namaItemController.text,
-                        idItem: Uuid().v4(),
-                        hargaItem: hargaItemController.text,
-                        idKategoriItem: "321",
-                        statusCondiment: false,
-                        urlGambar: "",
-                        qtyItem: 0,
-                        idCabang: selectedIDcabang!,
-                        barcode: kodeBarcodeController.text,
-                      );
-                      item.pushData(uidUser!);
-                      setState(() {
-                        namaItemController.clear();
-                        hargaItemController.clear();
-                        kodeBarcodeController.clear();
-                        _initItem();
-                      });
-                    }
-                  },
-                  label: Text("Simpan", style: lv1TextStyle),
-                  icon: Icon(Icons.save, color: Colors.black),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 4,
-                    backgroundColor: AppColor.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
