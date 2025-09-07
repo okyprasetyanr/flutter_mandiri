@@ -3,6 +3,7 @@ import 'package:flutter_mandiri/function/function.dart';
 import 'package:flutter_mandiri/model_data/model_item_pesanan.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
+import 'package:flutter_mandiri/widget/widget_navigation_gesture.dart';
 
 class ScreenTransaction extends StatefulWidget {
   const ScreenTransaction({super.key});
@@ -12,6 +13,13 @@ class ScreenTransaction extends StatefulWidget {
 }
 
 class _ScreenTransactionState extends State<ScreenTransaction> {
+  final List<Map<String, dynamic>> contentNavGesture = [
+    {
+      "toContext": ScreenTransaction(),
+      "text_menu": "Penjualan",
+      "onTap": () {},
+    },
+  ];
   bool isOpen = false;
   int gridviewcount = 0;
   final List<String> dummyItems = [
@@ -227,28 +235,14 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
   }
 
   Widget navigationGesture() {
-    return AnimatedPositioned(
-      left: isOpen ? 0 : -250,
-      duration: Duration(milliseconds: 300),
-      bottom: 0,
-      top: 0,
-      child: Container(
-        width: 250,
-        color: Colors.white,
-        child: Column(
-          children: [
-            ElevatedButton.icon(
-              onPressed: () {
-                setState(() {
-                  isOpen = !isOpen;
-                });
-              },
-              icon: Icon(Icons.arrow_back_rounded),
-              label: Text("Tutup"),
-            ),
-          ],
-        ),
-      ),
+    return NavigationGesture(
+      attContent: contentNavGesture,
+      isOpen: isOpen,
+      close: () {
+        setState(() {
+          isOpen = false;
+        });
+      },
     );
   }
 }

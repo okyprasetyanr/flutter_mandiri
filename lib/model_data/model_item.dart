@@ -71,24 +71,27 @@ class ModelItem {
     };
   }
 
-  Future<void> pushData(String uidUser) async {
-    await FirebaseFirestore.instance.collection("items").add(convertToMap());
+  Future<void> pushORupdateData(String idItem) async {
+    await FirebaseFirestore.instance
+        .collection("items")
+        .doc(idItem)
+        .set(convertToMap());
   }
 
   static List<ModelItem> getDataListItem(QuerySnapshot data) {
     return data.docs.map((map) {
-      final dataitem = map.data() as Map<String, dynamic>;
+      final dataItem = map.data() as Map<String, dynamic>;
       return ModelItem(
-        uidUser: dataitem['uid_user'],
-        namaItem: dataitem['nama_item'],
+        uidUser: dataItem['uid_user'],
+        namaItem: dataItem['nama_item'],
         idItem: map.id,
-        hargaItem: dataitem['harga_item'],
-        idKategoriItem: dataitem['id_kategori'],
-        statusCondiment: dataitem['status_condiment'],
-        urlGambar: dataitem['url_gambar'],
-        qtyItem: dataitem['qty_item'].toDouble(),
-        idCabang: dataitem['id_cabang'],
-        barcode: dataitem['barcode'],
+        hargaItem: dataItem['harga_item'],
+        idKategoriItem: dataItem['id_kategori'],
+        statusCondiment: dataItem['status_condiment'],
+        urlGambar: dataItem['url_gambar'],
+        qtyItem: dataItem['qty_item'].toDouble(),
+        idCabang: dataItem['id_cabang'],
+        barcode: dataItem['barcode'],
       );
     }).toList();
   }

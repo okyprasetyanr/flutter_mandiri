@@ -25,15 +25,12 @@ class ModelKategori {
   }
 
   static List<ModelKategori> getDataListKategori(QuerySnapshot data) {
-    Map mapdata = data as Map<String, dynamic>;
-    List listkategori = mapdata['kategory'] ?? [];
-    return listkategori
-        .map(
-          (map) => ModelKategori(
-            namaKategori: map['nama_kategori'],
-            idkategori: map['id_kategori'],
-          ),
-        )
-        .toList();
+    return data.docs.map((map) {
+      final dataKetegori = map.data() as Map<String, dynamic>;
+      return ModelKategori(
+        namaKategori: dataKetegori['nama_kategori'],
+        idkategori: map.id,
+      );
+    }).toList();
   }
 }
