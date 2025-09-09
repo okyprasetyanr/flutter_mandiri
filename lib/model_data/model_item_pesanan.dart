@@ -6,6 +6,7 @@ class ModelItemPesanan {
       _diskonItem,
       _idKategoriItem,
       _idCondimen,
+      _catatan,
       _urlGambar;
 
   ModelItemPesanan({
@@ -16,6 +17,7 @@ class ModelItemPesanan {
     required String diskonItem,
     required String idKategoriItem,
     required String idCondimen,
+    required String catatan,
     required String urlGambar,
   }) : _namaItem = namaItem,
        _idItem = idItem,
@@ -24,6 +26,7 @@ class ModelItemPesanan {
        _diskonItem = diskonItem,
        _idKategoriItem = idKategoriItem,
        _idCondimen = idCondimen,
+       _catatan = catatan,
        _urlGambar = urlGambar;
 
   String get getnamaItem => _namaItem;
@@ -33,6 +36,7 @@ class ModelItemPesanan {
   String get getdiskonItem => _diskonItem;
   String get getidKategoriItem => _idKategoriItem;
   String get getidCondimen => _idCondimen;
+  String get getcatatan => _catatan;
   String get geturlGambar => _urlGambar;
 
   set setnamaItem(String value) => _namaItem;
@@ -42,5 +46,6 @@ class ModelItemPesanan {
   set setdiskonItem(String value) => _diskonItem;
   set setidKategoriItem(String value) => _idKategoriItem;
   set setidCondimen(String value) => _idCondimen;
+  set setcatatan(String value) => _catatan;
   set seturlGambar(String value) => _urlGambar;
 }

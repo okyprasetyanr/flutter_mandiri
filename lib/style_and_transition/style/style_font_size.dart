@@ -52,7 +52,7 @@ final lv1TextStyleWhite = GoogleFonts.poppins(
 final lv0TextStyle = GoogleFonts.poppins(
   color: Colors.black,
   fontWeight: FontWeight.w300,
-  fontSize: 9,
+  fontSize: 10,
 );
 
 final lv0TextStyleRED = GoogleFonts.poppins(

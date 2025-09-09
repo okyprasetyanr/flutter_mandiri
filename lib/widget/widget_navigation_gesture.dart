@@ -7,11 +7,13 @@ class NavigationGesture extends StatefulWidget {
   final List<Map<String, dynamic>> attContent;
   final bool isOpen;
   final VoidCallback close;
+  final String currentPage;
   const NavigationGesture({
     super.key,
     required this.attContent,
     required this.isOpen,
     required this.close,
+    required this.currentPage,
   });
 
   @override
@@ -58,17 +60,22 @@ class _NavigationGestureState extends State<NavigationGesture> {
                 child: ListTile(
                   onTap: widget.close,
                   leading: Icon(Icons.keyboard_backspace_rounded),
-                  title: Text("Back", style: lv2TextStyle),
+                  title: Text("Tutup", style: lv2TextStyle),
                 ),
               ),
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: Column(
+              child: ListView(
+                padding: EdgeInsets.zero,
                 children: [
                   const SizedBox(height: 10),
                   for (var menu in widget.attContent)
-                    _navContent(menu['toContext'], menu['text_menu']),
+                    _navContent(
+                      menu['id'],
+                      menu['toContext'],
+                      menu['text_menu'],
+                    ),
                 ],
               ),
             ),
@@ -78,7 +85,7 @@ class _NavigationGestureState extends State<NavigationGesture> {
     );
   }
 
-  Widget _navContent(Widget toContext, String text) {
+  Widget _navContent(String id, Widget toContext, String text) {
     return Container(
       padding: EdgeInsets.only(bottom: 10),
       width: double.infinity,
@@ -88,10 +95,10 @@ class _NavigationGestureState extends State<NavigationGesture> {
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           onTap: () {
-            if (ModalRoute.of(context)!.isCurrent) {
-              customSnackBar(context, "Anda sudah berada diHalaman tersebut");
+            if (widget.currentPage == id) {
+              customSnackBar(context, "Anda sudah berada di$text");
             } else {
-              navUpDownTransition(context, toContext, false);
+              navUpDownTransition(context, toContext, true);
             }
           },
           borderRadius: BorderRadius.circular(10),

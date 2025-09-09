@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/function/function.dart';
 import 'package:flutter_mandiri/model_data/model_item_pesanan.dart';
+import 'package:flutter_mandiri/screens/screen_adjustment.dart';
+import 'package:flutter_mandiri/screens/screen_buy.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
 import 'package:flutter_mandiri/widget/widget_navigation_gesture.dart';
 
-class ScreenTransaction extends StatefulWidget {
-  const ScreenTransaction({super.key});
+class ScreenSale extends StatefulWidget {
+  const ScreenSale({super.key});
 
   @override
-  State<ScreenTransaction> createState() => _ScreenTransactionState();
+  State<ScreenSale> createState() => _ScreenSaleState();
 }
 
-class _ScreenTransactionState extends State<ScreenTransaction> {
+class _ScreenSaleState extends State<ScreenSale> {
   final List<Map<String, dynamic>> contentNavGesture = [
     {
-      "toContext": ScreenTransaction(),
+      "id": "sale",
+      "toContext": ScreenSale(),
       "text_menu": "Penjualan",
+      "onTap": () {},
+    },
+    {
+      "id": "buy",
+      "toContext": ScreenBuy(),
+      "text_menu": "Pembelian",
+      "onTap": () {},
+    },
+    {
+      "id": "adjustment",
+      "toContext": ScreenAdjustment(),
+      "text_menu": "Adjustment",
       "onTap": () {},
     },
   ];
@@ -153,6 +168,7 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
                           diskonItem: 0.toString(),
                           idKategoriItem: "Kategori A",
                           idCondimen: "none",
+                          catatan: "",
                           urlGambar: "",
                         ),
                       );
@@ -236,6 +252,7 @@ class _ScreenTransactionState extends State<ScreenTransaction> {
 
   Widget navigationGesture() {
     return NavigationGesture(
+      currentPage: "sale",
       attContent: contentNavGesture,
       isOpen: isOpen,
       close: () {

@@ -9,7 +9,6 @@ import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart'
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_standart.dart';
 import 'package:flutter_mandiri/widget/widget_navigation_gesture.dart';
 import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class ScreenInventory extends StatefulWidget {
@@ -20,7 +19,6 @@ class ScreenInventory extends StatefulWidget {
 }
 
 class _ScreenInventoryState extends State<ScreenInventory> {
-  String? uidUser;
   TextEditingController search = TextEditingController();
   String? selectedfilter;
   String? selectedcabang;
@@ -47,7 +45,12 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   }
 
   final List<Map<String, dynamic>> contentNavGesture = [
-    {"toContext": ScreenInventory(), "text_menu": "Inventory", "onTap": () {}},
+    {
+      "id": "inventory",
+      "toContext": ScreenInventory(),
+      "text_menu": "Inventori",
+      "onTap": () {},
+    },
   ];
   int gridviewcount = 0;
   bool checkcondiment = false;
@@ -95,10 +98,9 @@ class _ScreenInventoryState extends State<ScreenInventory> {
   }
 
   Future<void> setupData() async {
-    await _ambilUidUser();
     await _initCabang();
     if (listCabang.isNotEmpty) {
-      if (selectedIDcabang != null && uidUser != null) {
+      if (selectedIDcabang != null) {
         _initKategori();
         _initItem();
       }
@@ -109,7 +111,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     QuerySnapshot<Map<String, dynamic>> data =
         await FirebaseFirestore.instance
             .collection("kategori")
-            .where("uid_user", isEqualTo: uidUser)
+            .where("uid_user", isEqualTo: UserSession.ambilUidUser())
             .where("id_cabang", isEqualTo: selectedIDcabang)
             .orderBy("nama_kategori", descending: false)
             .get();
@@ -129,7 +131,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     DocumentSnapshot data =
         await FirebaseFirestore.instance
             .collection("users")
-            .doc("$uidUser")
+            .doc("${UserSession.ambilUidUser}")
             .get();
     if (data.exists && mounted) {
       setState(() {
@@ -146,7 +148,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
             .collection("items")
             .where('status_condiment', isEqualTo: checkcondiment)
             .where('id_cabang', isEqualTo: selectedIDcabang)
-            .where('uid_user', isEqualTo: uidUser)
+            .where('uid_user', isEqualTo: UserSession.ambilUidUser())
             .orderBy(keySortir, descending: sortir[keySortir]!)
             .get();
 
@@ -160,14 +162,8 @@ class _ScreenInventoryState extends State<ScreenInventory> {
     });
   }
 
-  Future<void> _ambilUidUser() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    uidUser = pref.getString("uid_user");
-  }
-
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
     gridviewcount = 4;
     return LayoutTopBottom(
       widgetTop: topLayout(),
@@ -181,6 +177,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: 130,
@@ -230,7 +227,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                         alignment: Alignment.centerLeft,
                         child: rowContentAnim(
                           Icon(Icons.swap_horiz_rounded, size: 35),
-                          Text("Inventory", style: titleTextStyle),
+                          Text("Inventori", style: titleTextStyle),
                         ),
                       ),
                     ),
@@ -815,7 +812,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                                         ? Uuid().v4()
                                         : iditemUpdate!;
                                 final item = ModelItem(
-                                  uidUser: uidUser!,
+                                  uidUser: UserSession.ambilUidUser()!,
                                   namaItem: namaItemController.text,
                                   idItem: iditem,
                                   hargaItem: hargaItemController.text,
@@ -883,7 +880,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
                         Map<String, dynamic> pushKategori = {
                           "nama_kategori": namaKategoriController.text,
                           "id_kategori": idkategori,
-                          "uid_user": uidUser,
+                          "uid_user": UserSession.ambilUidUser(),
                           "id_cabang": selectedIDcabang,
                         };
                         FirebaseFirestore.instance
@@ -927,6 +924,7 @@ class _ScreenInventoryState extends State<ScreenInventory> {
 
   Widget navigationGesture() {
     return NavigationGesture(
+      currentPage: "inventory",
       attContent: contentNavGesture,
       isOpen: isOpen,
       close: () {

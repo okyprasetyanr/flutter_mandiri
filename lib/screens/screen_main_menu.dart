@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mandiri/function/function.dart';
 import 'package:flutter_mandiri/screens/screen_inventory.dart';
-import 'package:flutter_mandiri/screens/screen_transaction.dart';
+import 'package:flutter_mandiri/screens/screen_sales.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/style_and_transition/transition_navigator/transition_UpDown.dart';
 import 'package:flutter_mandiri/template_responsif/layout_top_bottom_main_menu.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenMainMenu extends StatefulWidget {
   const ScreenMainMenu({super.key});
@@ -19,15 +19,20 @@ class _ScreenMainMenuState extends State<ScreenMainMenu> {
   @override
   void initState() {
     super.initState();
+    initUserSession();
+  }
+
+  Future<void> initUserSession() async {
+    await UserSession.init();
     getNamaPerusahaan();
   }
 
   Future<void> getNamaPerusahaan() async {
-    final pref = await SharedPreferences.getInstance();
+    await UserSession.ambilUidUser();
     DocumentSnapshot data =
         await FirebaseFirestore.instance
             .collection("users")
-            .doc(pref.getString("uid_user"))
+            .doc(UserSession.ambilUidUser())
             .get();
     if (data.exists) {
       setState(() {
@@ -63,11 +68,11 @@ Widget layoutTop(BuildContext context) {
           navUpDownTransition(context, ScreenInventory(), false);
         },
         Icon(Icons.inventory),
-        "Inventory",
+        "Inventoryi",
       ),
       gridViewMenu(
         () {
-          navUpDownTransition(context, ScreenTransaction(), false);
+          navUpDownTransition(context, ScreenSale(), false);
         },
         Icon(Icons.shopping_cart),
         "Transaksi",
