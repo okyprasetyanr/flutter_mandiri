@@ -40,8 +40,11 @@ class _ScreenBuyState extends State<ScreenBuy> {
     },
   ];
 
+  ValueNotifier<int> jumlah = ValueNotifier<int>(0);
+  String? selectedNamaItem;
   String? uidUser;
   bool isOpen = false;
+  bool popup = false;
   int gridviewcount = 0;
   List<ModelItem> listItem = [];
   List<ModelItemPesanan> listItemPesanan = [];
@@ -90,151 +93,361 @@ class _ScreenBuyState extends State<ScreenBuy> {
   }
 
   Widget layoutTop() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ElevatedButton.icon(
-              onPressed: () {
-                customSnackBar(context, "${listItem.length}");
-                setState(() {
-                  isOpen = !isOpen;
-                });
-              },
-              icon: Icon(Icons.menu),
-              label: Text("Menu"),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text("Pembelian", style: titleTextStyle),
-            ),
-          ],
-        ),
-
-        SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-              flex: 2,
-              child: TextField(
-                decoration: InputDecoration(
-                  alignLabelWithHint: false,
-                  label: Text("Search", style: lv1TextStyle),
-                  hintText: "Search...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton.icon(
+                  style: ButtonStyle(
+                    elevation: WidgetStatePropertyAll(4),
+                    backgroundColor: WidgetStatePropertyAll(AppColor.primary),
+                    iconColor: WidgetStatePropertyAll(Colors.white),
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Material(
-              elevation: 2,
-              borderRadius: BorderRadius.circular(5),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(5),
-                onTap: () {
-                  // aksi di sini
-                },
-                child: Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Icon(Icons.qr_code_2_rounded, size: 35),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Material(
-              elevation: 2,
-              borderRadius: BorderRadius.circular(5),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(5),
-                onTap: () {},
-                child: Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Icon(Icons.shopping_bag_rounded, size: 35),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Flexible(
-          child: GridView.builder(
-            padding: EdgeInsets.all(10),
-            itemCount: listItem.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: gridviewcount,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
-              childAspectRatio: 3 / 4,
-            ),
-            itemBuilder: (context, index) {
-              return Material(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                elevation: 4,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(15),
-                  onTap: () {
-                    final item = ModelItemPesanan(
-                      namaItem: listItem[index].getnamaItem,
-                      idItem: listItem[index].getidItem,
-                      qtyItem: "1",
-                      hargaItem: listItem[index].gethargaItem,
-                      diskonItem: "0",
-                      idKategoriItem: listItem[index].getidKategoriItem,
-                      idCondimen: "",
-                      catatan: "",
-                      urlGambar: listItem[index].geturlGambar,
-                    );
+                  onPressed: () {
+                    customSnackBar(context, "${listItem.length}");
                     setState(() {
-                      listItemPesanan.add(item);
+                      isOpen = !isOpen;
                     });
                   },
-                  child: Padding(
-                    padding: EdgeInsetsGeometry.all(5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          fit: FlexFit.loose,
-                          child: Center(child: Image.asset("assets/logo.png")),
-                        ),
-                        const SizedBox(height: 5),
-                        Center(
-                          child: Text(
-                            listItem[index].getnamaItem,
-                            style: lv05TextStyle,
-                          ),
-                        ),
-                        Text(
-                          formatUang(listItem[index].gethargaItem),
-                          style: lv05TextStyle,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("Qty", style: lv05TextStyle),
-                            Text(
-                              formatQty(listItem[index].getqtyitem),
-                              style: lv0TextStyleRED,
-                            ),
-                          ],
-                        ),
-                      ],
+                  icon: Icon(Icons.menu),
+                  label: Text("Menu", style: lv1TextStyleWhite),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text("Pembelian", style: titleTextStyle),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      alignLabelWithHint: false,
+                      label: Text("Search", style: lv1TextStyle),
+                      hintText: "Search...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                   ),
                 ),
-              );
-            },
+                const SizedBox(width: 10),
+                Material(
+                  elevation: 2,
+                  borderRadius: BorderRadius.circular(5),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(5),
+                    onTap: () {
+                      // aksi di sini
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Icon(Icons.qr_code_2_rounded, size: 35),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Material(
+                  elevation: 2,
+                  borderRadius: BorderRadius.circular(5),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(5),
+                    onTap: () {},
+                    child: Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Icon(Icons.shopping_bag_rounded, size: 35),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Flexible(
+              child: GridView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: listItem.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: gridviewcount,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                  childAspectRatio: 3 / 4,
+                ),
+                itemBuilder: (context, index) {
+                  return Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    elevation: 4,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(15),
+                      onTap: () {
+                        final item = ModelItemPesanan(
+                          namaItem: listItem[index].getnamaItem,
+                          idItem: listItem[index].getidItem,
+                          qtyItem: "1",
+                          hargaItem: listItem[index].gethargaItem,
+                          diskonItem: "0",
+                          idKategoriItem: listItem[index].getidKategoriItem,
+                          idCondimen: "",
+                          catatan: "",
+                          urlGambar: listItem[index].geturlGambar,
+                        );
+                        setState(() {
+                          listItemPesanan.add(item);
+                          popup = !popup;
+                          selectedNamaItem = listItemPesanan[index].getnamaItem;
+                        });
+                      },
+                      child: Padding(
+                        padding: EdgeInsetsGeometry.all(5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: Center(
+                                child: Image.asset("assets/logo.png"),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Center(
+                              child: Text(
+                                listItem[index].getnamaItem,
+                                style: lv05TextStyle,
+                              ),
+                            ),
+                            Text(
+                              formatUang(listItem[index].gethargaItem),
+                              style: lv05TextStyle,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("Qty", style: lv05TextStyle),
+                                Text(
+                                  formatQty(listItem[index].getqtyitem),
+                                  style: lv0TextStyleRED,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        AnimatedPositioned(
+          top: popup ? 60 : 500,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          curve: Curves.easeInOut,
+          duration: Duration(milliseconds: 500),
+          child: Container(
+            margin: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurStyle: BlurStyle.outer,
+                  offset: Offset(0, 0),
+                  spreadRadius: 5,
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(selectedNamaItem ?? "", style: lv1TextStyle),
+                      Column(
+                        children: [
+                          Text("Quantity:", style: lv1TextStyle),
+                          ValueListenableBuilder<int>(
+                            valueListenable: jumlah,
+                            builder: (context, value, child) {
+                              return Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      jumlah.value--;
+                                    },
+                                    icon: Icon(Icons.remove, size: 20),
+                                  ),
+                                  Text("$value", style: lv1TextStyle),
+                                  IconButton(
+                                    onPressed: () {
+                                      jumlah.value++;
+                                    },
+                                    icon: Icon(Icons.add, size: 20),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ButtonStyle(
+                              padding: WidgetStatePropertyAll(
+                                EdgeInsets.all(10),
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                const Color.fromARGB(255, 255, 154, 72),
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadiusGeometry.circular(
+                                    5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            icon: Icon(Icons.card_giftcard_rounded),
+                            label: Text("Free/Bonus", style: lv1TextStyleWhite),
+                            onPressed: () {
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+                      Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ButtonStyle(
+                              padding: WidgetStatePropertyAll(
+                                EdgeInsets.all(10),
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                const Color.fromARGB(255, 255, 89, 78),
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadiusGeometry.circular(
+                                    5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            icon: Icon(Icons.delete_forever_rounded),
+                            label: Text("Hapus", style: lv1TextStyleWhite),
+                            onPressed: () {
+                              setState(() {
+                                popup = !popup;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ButtonStyle(
+                              padding: WidgetStatePropertyAll(
+                                EdgeInsets.all(10),
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.red,
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadiusGeometry.circular(
+                                    5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            icon: Icon(Icons.close_rounded),
+                            label: Text("Tutup", style: lv1TextStyleWhite),
+                            onPressed: () {
+                              setState(() {
+                                popup = !popup;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                AppColor.primary,
+                              ),
+                              padding: WidgetStatePropertyAll(
+                                EdgeInsets.all(10),
+                              ),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadiusGeometry.circular(
+                                    5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            icon: Icon(Icons.edit_note_rounded),
+                            label: Text("Simpan", style: lv1TextStyleWhite),
+                            onPressed: () {
+                              setState(() {
+                                popup = !popup;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -345,7 +558,12 @@ class _ScreenBuyState extends State<ScreenBuy> {
               iconColor: WidgetStatePropertyAll(Colors.white),
               backgroundColor: WidgetStatePropertyAll(AppColor.primary),
             ),
-            onPressed: () {},
+            onPressed: () {
+              if (listItemPesanan.isEmpty) {
+                return;
+              }
+              payment();
+            },
             label: Text("Bayar", style: lv1TextStyleWhite),
             icon: Icon(Icons.attach_money_rounded),
           ),
@@ -367,4 +585,6 @@ class _ScreenBuyState extends State<ScreenBuy> {
       },
     );
   }
+
+  void payment() {}
 }

@@ -17,6 +17,7 @@ dependencies:
   shared_preferences: any
   intl: any
   flutter_switch: any
+  flutter_riverpod: any
 
 dev_dependencies:
   flutter_test:

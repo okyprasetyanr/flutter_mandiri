@@ -10,24 +10,33 @@ import 'package:flutter_mandiri/style_and_transition/transition_navigator/transi
 import 'package:flutter_mandiri/widget/widget_snack_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final obscurePasswordProvider = StateProvider<bool>((ref) => false);
+final logoTopProvider = StateProvider<double>((ref) => 0);
+final showFormProvider = StateProvider<bool>((ref) => false);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MaterialApp(home: ScreenLogin(), debugShowCheckedModeBanner: false));
+  runApp(
+    const ProviderScope(
+      child: MaterialApp(
+        home: ScreenLogin(),
+        debugShowCheckedModeBanner: false,
+      ),
+    ),
+  );
 }
 
-class ScreenLogin extends StatefulWidget {
+class ScreenLogin extends ConsumerStatefulWidget {
   const ScreenLogin({super.key});
 
   @override
-  State<ScreenLogin> createState() => _MainAppState();
+  ConsumerState<ScreenLogin> createState() => _ScreenLoginState();
 }
 
-class _MainAppState extends State<ScreenLogin> {
-  bool _obscurePassword = false;
-  double? _logoTopPosition;
-  bool showForm = false;
+class _ScreenLoginState extends ConsumerState<ScreenLogin> {
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passcontroller = TextEditingController();
 
@@ -41,14 +50,13 @@ class _MainAppState extends State<ScreenLogin> {
   @override
   void initState() {
     super.initState();
-    _logoTopPosition = 0;
 
     Future.delayed(const Duration(milliseconds: 2000), () {
-      setState(() => _logoTopPosition = -150);
+      ref.read(logoTopProvider.notifier).state = -150;
     });
 
     Future.delayed(const Duration(milliseconds: 2800), () {
-      setState(() => showForm = true);
+      ref.read(showFormProvider.notifier).state = true;
     });
   }
 
@@ -72,15 +80,18 @@ class _MainAppState extends State<ScreenLogin> {
   }
 
   Widget _login() {
+    final logoTop = ref.watch(logoTopProvider);
+    final showForm = ref.watch(showFormProvider);
+    final obscurePassword = ref.watch(obscurePasswordProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          if (_logoTopPosition != null)
+          if (logoTop != null)
             Center(
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 800),
-                transform: Matrix4.translationValues(0, _logoTopPosition!, 0),
+                transform: Matrix4.translationValues(0, logoTop, 0),
                 curve: Curves.easeOut,
                 child: Image.asset(
                   'assets/logo.png',
@@ -167,7 +178,7 @@ class _MainAppState extends State<ScreenLogin> {
                                       shadowColor: Colors.black,
                                       child: TextField(
                                         controller: passcontroller,
-                                        obscureText: _obscurePassword,
+                                        obscureText: obscurePassword,
                                         decoration: InputDecoration(
                                           labelText: 'Password:',
                                           labelStyle: labelTextStyle,
@@ -181,12 +192,16 @@ class _MainAppState extends State<ScreenLogin> {
                                           suffixIcon: IconButton(
                                             onPressed: () {
                                               setState(() {
-                                                _obscurePassword =
-                                                    !_obscurePassword;
+                                                ref
+                                                    .read(
+                                                      obscurePasswordProvider
+                                                          .notifier,
+                                                    )
+                                                    .state = !obscurePassword;
                                               });
                                             },
                                             icon: Icon(
-                                              _obscurePassword
+                                              obscurePassword
                                                   ? Icons.visibility
                                                   : Icons.visibility_off,
                                             ),
