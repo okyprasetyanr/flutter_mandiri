@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mandiri/function/function.dart';
-import 'package:flutter_mandiri/screens/screen_inventory.dart';
+import 'package:flutter_mandiri/features/Inventory/presentation/screen_inventory.dart';
 import 'package:flutter_mandiri/screens/screen_sales.dart';
 import 'package:flutter_mandiri/style_and_transition/style/style_font_size.dart';
 import 'package:flutter_mandiri/style_and_transition/transition_navigator/transition_UpDown.dart';

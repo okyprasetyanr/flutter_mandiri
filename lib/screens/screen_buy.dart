@@ -109,7 +109,6 @@ class _ScreenBuyState extends State<ScreenBuy> {
                     iconColor: WidgetStatePropertyAll(Colors.white),
                   ),
                   onPressed: () {
-                    customSnackBar(context, "${listItem.length}");
                     setState(() {
                       isOpen = !isOpen;
                     });

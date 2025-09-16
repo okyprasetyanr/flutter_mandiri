@@ -18,6 +18,7 @@ dependencies:
   intl: any
   flutter_switch: any
   flutter_riverpod: any
+  flutter_bloc: any
 
 dev_dependencies:
   flutter_test:
